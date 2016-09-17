@@ -1,0 +1,50 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/bluegray_medium</item>
+        <!-- Light Indigo -->
+        <item name="colorPrimaryDark">@color/bluegray_dark</item>
+        <!-- Dark Indigo -->
+        <item name="colorAccent">@color/orange</item>
+        <!-- Blue -->
+    </style>
+    <style name="AppTheme" parent="AppTheme.Base"></style>
+
+    <!-- Action Bar Button -->
+    <style name="ActionBarTextButton">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/font_subheading</item>
+        <item name="android:layout_marginRight">@dimen/spacing_large</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+    </style>
+
+    <style name="ListTitleText">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/font_subheading</item>
+        <item name="android:textColor">@color/bluegray_dark</item>
+    </style>
+
+    <style name="RegularText">
+        <item name="android:fontFamily">sans-serif-regular</item>
+        <item name="android:textSize">@dimen/font_normal</item>
+        <item name="android:layout_margin">@dimen/spacing_small</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="LightText" parent="@style/RegularText">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="MediumText" parent="@style/RegularText">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="BoldText" parent="@style/RegularText">
+        <item name="android:fontFamily">sans-serif-bold</item>
+    </style>
+
+
+
+</resources>

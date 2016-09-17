@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Battery Alarm</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="save">SAVE</string>
+    <string name="notification_created">Notification has been created.</string>
+    <string name="notification_updated">Changes to notification have been saved.</string>
+    <string name="battery_percentage">Battery Percentage</string>
+    <string name="zero_percent">0%</string>
+    <string name="hundred_percent">100%</string>
+    <string name="battery_status">Battery Status</string>
+    <string name="fifty_percent">50%</string>
+    <string name="ringtone_title">Notification sound</string>
+    <string name="ringtone_text">Select sound</string>
+
+    <!-- Battery Status Values -->
+    <string-array name="status_values_array">
+        <item>Charging</item>
+        <item>Discharging</item>
+    </string-array>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#757575</color>-->
+    <!--<color name="colorPrimaryDark">#616161</color>-->
+    <!--<color name="colorPrimaryLight">#E0E0E0</color>-->
+    <!--<color name="colorAccent">#03A9F4</color>-->
+
+    <!-- grayscale -->
+    <color name="bluegray_dark">#546E7A</color>
+    <color name="bluegray_medium">#607D8B</color>
+    <color name="bluegray_light">#90A4AE</color>
+    <color name="bluegray_transparent">#6090A4AE</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- other colors -->
+    <color name="orange">#FF5722</color>
+
+</resources>

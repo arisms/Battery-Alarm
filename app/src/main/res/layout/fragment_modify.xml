@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_normal"
+        android:paddingLeft="@dimen/spacing_normal"
+        android:paddingRight="@dimen/spacing_normal"
+        android:paddingBottom="@dimen/spacing_small">
+
+        <TextView
+            android:id="@+id/text_percentage_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/battery_percentage"
+            style="@style/ListTitleText"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/spacing_small">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zero_percent"
+                style="@style/RegularText"/>
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekbar_percentage"
+                style="@style/Widget.AppCompat.SeekBar"
+                android:max="20"
+                android:progress="10"
+                android:layout_weight="1"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hundred_percent"
+                style="@style/RegularText"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_percentage_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/fifty_percent"
+            style="@style/RegularText"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bluegray_transparent"/>
+
+    <LinearLayout
+        android:id="@+id/layout_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_normal"
+        android:paddingLeft="@dimen/spacing_normal"
+        android:paddingRight="@dimen/spacing_normal"
+        android:paddingBottom="@dimen/spacing_small"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/text_status_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/battery_status"
+            style="@style/ListTitleText"/>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_status"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bluegray_transparent"/>
+
+    <LinearLayout
+        android:id="@+id/layout_ringtone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/spacing_normal"
+        android:paddingRight="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground">
+
+
+        <TextView
+            android:id="@+id/text_ringtone_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ringtone_title"
+            style="@style/ListTitleText"/>
+
+        <TextView
+            android:id="@+id/text_ringtone_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ringtone_text"
+            style="@style/RegularText"/>
+
+    </LinearLayout>
+
+</LinearLayout>
