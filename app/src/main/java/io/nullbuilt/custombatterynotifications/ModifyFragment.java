@@ -2,6 +2,7 @@ package io.nullbuilt.custombatterynotifications;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -18,15 +19,20 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 /**
  * Created by Aris on 16/09/16.
  */
 public class ModifyFragment extends Fragment {
     private static final String TAG = "ModifyFragment";
     private static Spinner spinner = null;
+
     public static final int REQUEST_RINGTONE = 3;
     private static TextView percentageValueText = null;
     private static TextView textRingtoneValue = null;
+    public static final int VOLUME_MIN = 0;
+    public static final int VOLUME_MAX = 4;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -117,10 +123,25 @@ public class ModifyFragment extends Fragment {
     }
 
 
-    public void setRingtone(Uri uri) {
+    private void setRingtone(Uri uri) {
         Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), uri);
         String ringtoneName = ringtone.getTitle(getActivity());
         Log.i(TAG, "setRingtone: uri = " + ringtoneName);
         textRingtoneValue.setText(ringtoneName);
+    }
+
+    private void playRingtoneForFiveSeconds(Uri ringtoneUri, int volume) {
+
+        try {
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setVolume(0.1f, 0.1f);
+            mediaPlayer.setDataSource(getActivity(), ringtoneUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

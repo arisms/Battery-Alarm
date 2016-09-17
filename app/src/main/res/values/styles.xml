@@ -34,7 +34,8 @@
     </style>
 
     <style name="LightText" parent="@style/RegularText">
-        <item name="android:fontFamily">sans-serif-light</item>
+        <!--<item name="android:fontFamily">sans-serif-light</item>-->
+        <item name="android:textColor">@color/bluegray_dark</item>
     </style>
 
     <style name="MediumText" parent="@style/RegularText">
