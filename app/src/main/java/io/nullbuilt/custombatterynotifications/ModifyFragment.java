@@ -27,13 +27,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -244,6 +237,12 @@ public class ModifyFragment extends Fragment {
         int volume = volumeSeekBar.getProgress();
         boolean vibrate = vibrateCheckbox.isChecked();
 
+        // If the ringtone was not selected, add the default ringtone
+        if(ringtoneUri == null) {
+            ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(getActivity(),
+                    RingtoneManager.TYPE_NOTIFICATION);
+        }
+
         CustomBatteryNotification customBatteryNotification = new CustomBatteryNotification(
                 percentage,
                 batteryStatus,
@@ -271,8 +270,7 @@ public class ModifyFragment extends Fragment {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-//        Gson gson = new Gson();
-        Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new UriInOut()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new Utility.UriSerializeDeserialize()).create();
 
         // Read the list of objects from the SharedPreferences
         List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
@@ -300,19 +298,6 @@ public class ModifyFragment extends Fragment {
         // write the updated list back to the SharedPreferences
         json = gson.toJson(notificationsList);
         editor.putString("notificationsJson", json);
-        editor.commit();
-    }
-
-    public class UriInOut implements JsonSerializer<Uri>, JsonDeserializer<Uri> {
-        @Override
-        public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.toString());
-        }
-
-        @Override
-        public Uri deserialize(final JsonElement src, final Type srcType,
-                               final JsonDeserializationContext context) throws JsonParseException {
-            return Uri.parse(src.getAsString());
-        }
+        editor.apply();
     }
 }
