@@ -1,12 +1,15 @@
 package io.nullbuilt.custombatterynotifications;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,22 +25,38 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aris on 16/09/16.
  */
 public class ModifyFragment extends Fragment {
     private static final String TAG = "ModifyFragment";
-    private static Spinner spinner = null;
+    private static Spinner statusSpinner = null;
 
     public static final int REQUEST_RINGTONE = 3;
     private static TextView percentageValueText = null;
     private static TextView textRingtoneValue = null;
     private static final int VOLUME_MIN = 0;
     private static final int VOLUME_MAX = 4;
-    private static Uri ringtoneUri;
-    private static boolean vibrate;
+    private static CheckBox vibrateCheckbox;
+    private Uri ringtoneUri;
+    SeekBar percentageSeekBar, volumeSeekBar;
+    ModifyActivity modifyActivity = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,16 +69,15 @@ public class ModifyFragment extends Fragment {
 
     private void setViews(View rootView) {
         ringtoneUri = null;
-        vibrate = false;
 
         // Instantiate View variables
         percentageValueText = (TextView) rootView.findViewById(R.id.text_percentage_value);
         textRingtoneValue = (TextView) rootView.findViewById(R.id.text_ringtone_value);
-        final CheckBox vibrateCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_vibrate);
+        vibrateCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_vibrate);
 
 
         // Percentage Seek Bar
-        SeekBar percentageSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_percentage);
+        percentageSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_percentage);
         percentageSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -78,7 +96,7 @@ public class ModifyFragment extends Fragment {
         });
 
         // Volume Seek Bar
-        final SeekBar volumeSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_volume);
+        volumeSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_volume);
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -99,7 +117,7 @@ public class ModifyFragment extends Fragment {
         volumeMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                volumeSeekBar.setProgress(0);
+                volumeSeekBar.setProgress(VOLUME_MIN);
             }
         });
 
@@ -107,26 +125,26 @@ public class ModifyFragment extends Fragment {
         volumeMax.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                volumeSeekBar.setProgress(4);
+                volumeSeekBar.setProgress(VOLUME_MAX);
             }
         });
 
         // Battery Status Spinner
-        spinner = (Spinner) rootView.findViewById(R.id.spinner_status);
+        statusSpinner = (Spinner) rootView.findViewById(R.id.spinner_status);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.status_values_array, R.layout.status_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(adapter);
+        statusSpinner.setAdapter(adapter);
 
         /* Clickable Layouts */
-        // Set spinner layout to show the spinner when clicked
+        // Set statusSpinner layout to show the statusSpinner when clicked
         LinearLayout statusLayout = (LinearLayout) rootView.findViewById(R.id.layout_status);
         statusLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                spinner.performClick();
+                statusSpinner.performClick();
             }
         });
 
@@ -169,6 +187,15 @@ public class ModifyFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof ModifyActivity) {
+            Log.i(TAG, "onAttach: context instanceof ModifyActivity");
+            modifyActivity = (ModifyActivity) context;
+        }
+    }
 
     private void setRingtoneName(Uri uri) {
         Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), uri);
@@ -204,5 +231,88 @@ public class ModifyFragment extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Get custom values from Views and create
+     * the CustomBatteryNotification object.
+     */
+    public CustomBatteryNotification getValuesFromViews() {
+        int percentage = percentageSeekBar.getProgress();
+        BatteryStatus batteryStatus = statusSpinner.getSelectedItem().toString().equals("Charging")
+                ? BatteryStatus.CHARGING : BatteryStatus.DISCHARGING;
+        int volume = volumeSeekBar.getProgress();
+        boolean vibrate = vibrateCheckbox.isChecked();
+
+        CustomBatteryNotification customBatteryNotification = new CustomBatteryNotification(
+                percentage,
+                batteryStatus,
+                ringtoneUri,
+                volume,
+                vibrate
+        );
+
+        return customBatteryNotification;
+    }
+
+    /**
+     * Create a CustomBatteryNotification object and save it
+     * to the list of objects in the SharedPreferences file.
+     */
+    public void saveCustomBatteryNotification() {
+
+        CustomBatteryNotification customBatteryNotification = getValuesFromViews();
+        Log.i(TAG, "saveCustomBatteryNotification: " + customBatteryNotification.getPercentage()
+                + ", " + customBatteryNotification.getRingtoneUri()
+                + ", " + customBatteryNotification.getBatteryStatus()
+                + ", " + customBatteryNotification.getVibrate());
+
+        // Get the Shared Preferences file for writing.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+//        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new UriInOut()).create();
+
+        // Read the list of objects from the SharedPreferences
+        List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
+        String json = sharedPreferences.getString("notificationsJson", "");
+        Log.d(TAG, "saveCustomBatteryNotification: JSON string from SP: " + json);
+
+        // Convert from JSON string to list of CustomBatteryNotification objects
+        Type type = new TypeToken<List<CustomBatteryNotification>>(){}.getType();
+        notificationsList = gson.fromJson(json, type);
+        if(notificationsList != null) {
+            Log.d(TAG, "saveCustomBatteryNotification: notificationsList.size = " + notificationsList.size());
+            for (CustomBatteryNotification c : notificationsList) {
+                Log.d(TAG, "saveCustomBatteryNotification: notificationsList - " + c.toString());
+            }
+        }
+        else
+            Log.d(TAG, "saveCustomBatteryNotification: notificationsList NULL");
+
+        // Add the new object to the list
+        if(notificationsList == null)
+            notificationsList = new ArrayList<>();
+        notificationsList.add(customBatteryNotification);
+
+        // Convert the list of objects to a JSON string and then
+        // write the updated list back to the SharedPreferences
+        json = gson.toJson(notificationsList);
+        editor.putString("notificationsJson", json);
+        editor.commit();
+    }
+
+    public class UriInOut implements JsonSerializer<Uri>, JsonDeserializer<Uri> {
+        @Override
+        public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.toString());
+        }
+
+        @Override
+        public Uri deserialize(final JsonElement src, final Type srcType,
+                               final JsonDeserializationContext context) throws JsonParseException {
+            return Uri.parse(src.getAsString());
+        }
     }
 }

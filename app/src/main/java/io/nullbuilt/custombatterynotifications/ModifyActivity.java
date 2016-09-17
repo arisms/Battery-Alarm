@@ -36,6 +36,7 @@ public class ModifyActivity extends AppCompatActivity {
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    modifyFragment.saveCustomBatteryNotification();
                     setResult(Activity.RESULT_OK);
                     finish();
                 }
