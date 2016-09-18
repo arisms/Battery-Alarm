@@ -13,6 +13,7 @@
     <string name="ringtone_text">Select sound</string>
     <string name="ringtone_volume_title">Notification volume</string>
     <string name="vibration_title">Vibrate</string>
+    <string name="list_header">Active</string>
 
     <!-- Battery Status Values -->
     <string-array name="status_values_array">

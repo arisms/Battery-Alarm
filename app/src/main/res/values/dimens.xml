@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- font sizes -->
+    <dimen name="font_huge">30sp</dimen>
     <dimen name="font_larger">22sp</dimen>
     <dimen name="font_large">18sp</dimen>
     <dimen name="font_title">17sp</dimen>

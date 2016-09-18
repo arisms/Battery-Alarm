@@ -248,7 +248,8 @@ public class ModifyFragment extends Fragment {
                 batteryStatus,
                 ringtoneUri,
                 volume,
-                vibrate
+                vibrate,
+                true
         );
 
         return customBatteryNotification;

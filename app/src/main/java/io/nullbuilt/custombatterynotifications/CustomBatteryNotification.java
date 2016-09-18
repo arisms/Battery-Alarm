@@ -12,14 +12,16 @@ public class CustomBatteryNotification {
     private Uri ringtoneUri;
     private int volume;
     private boolean vibrate;
+    private boolean active;
 
     public CustomBatteryNotification(int percentage, BatteryStatus batteryStatus,
-                                     Uri ringtoneUri, int volume, boolean vibrate) {
+                                     Uri ringtoneUri, int volume, boolean vibrate, boolean active) {
         this.percentage = percentage;
         this.batteryStatus = batteryStatus;
         this.ringtoneUri = ringtoneUri;
         this.volume = volume;
         this.vibrate = vibrate;
+        this.active = active;
     }
 
     public int getPercentage() {
@@ -37,5 +39,17 @@ public class CustomBatteryNotification {
     public boolean getVibrate() {
         return this.vibrate;
     }
+    public boolean getActive() {
+        return this.active;
+    }
 
+    public void modify(int percentage, BatteryStatus batteryStatus,
+                       Uri ringtoneUri, int volume, boolean vibrate, boolean active) {
+        this.percentage = percentage;
+        this.batteryStatus = batteryStatus;
+        this.ringtoneUri = ringtoneUri;
+        this.volume = volume;
+        this.vibrate = vibrate;
+        this.active = active;
+    }
 }
