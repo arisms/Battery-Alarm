@@ -44,17 +44,23 @@ public class Utility {
      * Returns true if the list of CustomBatteryNotification objects
      * contains at least 1 object with .active == true
      */
-    public boolean notificationsListContainsActive(List<CustomBatteryNotification> notificationList) {
-        // TODO implement notificationsListContainsActive
-        return true;
+    public static boolean notificationsListContainsActive(List<CustomBatteryNotification> notificationList) {
+        for (CustomBatteryNotification notification : notificationList) {
+            if (notification.getActive())
+                return true;
+        }
+        return false;
     }
 
     /**
      * Returns true if the list of CustomBatteryNotification objects
      * contains at least 1 object with .active == false
      */
-    public boolean notificationsListContainsInactive(List<CustomBatteryNotification> notificationList) {
-        // TODO implement notificationsListContainsActive
-        return true;
+    public static boolean notificationsListContainsInactive(List<CustomBatteryNotification> notificationList) {
+        for (CustomBatteryNotification notification : notificationList) {
+            if (!notification.getActive())
+                return true;
+        }
+        return false;
     }
 }

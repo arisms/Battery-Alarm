@@ -12,10 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CREATE_NOTIFICATION = 1;
     private static final int REQUEST_EDIT_NOTIFICATION = 2;
+    private static HomeFragment homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +43,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if( savedInstanceState == null ) {
+            homeFragment = new HomeFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container_main, new HomeFragment()).commit();
+                    .add(R.id.container_main, homeFragment).commit();
         }
     }
 
@@ -57,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.action_information) {
             // Start the AboutActivity
-            startModifyActivity(REQUEST_EDIT_NOTIFICATION);
+            //startModifyActivity(REQUEST_EDIT_NOTIFICATION);
+            homeFragment.clearAll();
+            return true;
+        }
+        else if(id == R.id.action_sort) {
+            testCBNCompareTo();
             return true;
         }
 
@@ -89,4 +100,90 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, ModifyActivity.class), requestCode);
     }
 
+    public void testCBNCompareTo() {
+
+        List<CustomBatteryNotification> notificationsList = new ArrayList<>();
+
+        // Three active notifications
+        CustomBatteryNotification customBatteryNotification = new CustomBatteryNotification(
+                7,
+                BatteryStatus.CHARGING,
+                null,
+                1,
+                false,
+                true,
+                1
+        );
+        notificationsList.add(customBatteryNotification);
+
+        customBatteryNotification = new CustomBatteryNotification(
+                5,
+                BatteryStatus.DISCHARGING,
+                null,
+                1,
+                false,
+                true,
+                2
+        );
+        notificationsList.add(customBatteryNotification);
+
+        customBatteryNotification = new CustomBatteryNotification(
+                7,
+                BatteryStatus.DISCHARGING,
+                null,
+                1,
+                false,
+                true,
+                3
+        );
+        notificationsList.add(customBatteryNotification);
+
+        // Three active notifications
+        customBatteryNotification = new CustomBatteryNotification(
+                7,
+                BatteryStatus.CHARGING,
+                null,
+                1,
+                false,
+                false,
+                1
+        );
+        notificationsList.add(customBatteryNotification);
+
+        customBatteryNotification = new CustomBatteryNotification(
+                5,
+                BatteryStatus.DISCHARGING,
+                null,
+                1,
+                false,
+                false,
+                2
+        );
+        notificationsList.add(customBatteryNotification);
+
+        customBatteryNotification = new CustomBatteryNotification(
+                7,
+                BatteryStatus.DISCHARGING,
+                null,
+                1,
+                false,
+                false,
+                3
+        );
+        notificationsList.add(customBatteryNotification);
+
+        Log.d(TAG, "notificationsList Before Sorting: ");
+        for (CustomBatteryNotification n : notificationsList) {
+            Log.d(TAG, "Active: " + n.getActive() + ", Status: " + n.getBatteryStatus()
+                    + ", Percentage: " + n.getPercentage());
+        }
+
+        Collections.sort(notificationsList);
+
+        Log.d(TAG, "notificationsList After Sorting: ");
+        for (CustomBatteryNotification n : notificationsList) {
+            Log.d(TAG, "Active: " + n.getActive() + ", Status: " + n.getBatteryStatus()
+                    + ", Percentage: " + n.getPercentage());
+        }
+    }
 }

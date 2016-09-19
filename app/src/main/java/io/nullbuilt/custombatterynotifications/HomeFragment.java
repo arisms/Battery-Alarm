@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,6 +29,8 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     private MainActivity mainActivity;
+    private static NotificationsAdapter notificationsAdapter;
+    private static List<NotificationsListItem> notificationsList;
 
     public HomeFragment() {
     }
@@ -39,14 +42,48 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "onCreateView: HomeFragment");
         mainActivity = (MainActivity) getActivity();
 
-        /* Retrieve the list of CustomBatterNotification
-           objects from the SharedPreferences file. */
-        List<CustomBatteryNotification> notificationList = getListOfCustomNotifications(mainActivity);
+        // Create list of items for the RecyclerView
+        notificationsList = new ArrayList<NotificationsListItem>();
+
+        // Retrieve the list of CustomBatterNotification
+        // objects from the SharedPreferences file.
+        List<CustomBatteryNotification> notifications = getListOfCustomNotifications(mainActivity);
+
+        // Sort the list of CustomBatteryNotification objects
+        Collections.sort(notifications);
+
+        // If the list of notification objects contains at least one notification set as active
+        if(Utility.notificationsListContainsActive(notifications)) {
+            // Create a header in the notificationsList for active notifications
+            notificationsList.add(new NotificationsListItem(true, "Active", null));
+
+            // Add all active objects
+            for (CustomBatteryNotification n : notifications) {
+                if(n.getActive())
+                    notificationsList.add(new NotificationsListItem(false, "", n));
+
+                // Since the list is sorted, all active objects are first
+                if(!n.getActive())
+                    break;
+            }
+        }
+        // If the list of notification objects contains at least one notification set as INactive
+        if(Utility.notificationsListContainsInactive(notifications)) {
+            // Create a header in the notificationsList for INactive notifications
+            notificationsList.add(new NotificationsListItem(true, "Deactivated", null));
+
+            // Add all active objects
+            for (CustomBatteryNotification n : notifications) {
+                if(!n.getActive())
+                    notificationsList.add(new NotificationsListItem(false, "", n));
+            }
+        }
+
 
 //        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.id.notifications_recycler, container, false);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.notifications_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(notificationList);
+        notificationsAdapter = new NotificationsAdapter(this, notifications);
         recyclerView.setAdapter(notificationsAdapter);
 
         return rootView;
@@ -74,5 +111,23 @@ public class HomeFragment extends Fragment {
             Log.d(TAG, "getListOfCustomNotifications: notificationsList NULL");
 
         return notificationsList;
+    }
+
+    public void updateNotificationsList(List<CustomBatteryNotification> notificationsList) {
+        // Get the Shared Preferences file for writing.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new Utility.UriSerializeDeserialize()).create();
+
+        // Convert the list of objects to a JSON string and then
+        // write the updated list back to the SharedPreferences
+        String json = gson.toJson(notificationsList);
+        editor.putString("notificationsJson", json);
+        editor.apply();
+    }
+
+    public void clearAll() {
+        notificationsAdapter.clearAll();
     }
 }

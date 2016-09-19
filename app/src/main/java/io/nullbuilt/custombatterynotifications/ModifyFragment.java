@@ -159,7 +159,7 @@ public class ModifyFragment extends Fragment {
         vibrateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "onClick: isChecked = " + vibrateCheckbox.isChecked());
+                Log.d(TAG, "onClick: isChecked = " + vibrateCheckbox.isChecked());
                 if(vibrateCheckbox.isChecked())
                     vibrateCheckbox.setChecked(false);
                 else
@@ -171,7 +171,7 @@ public class ModifyFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "onActivityResult: requestCode - resultCode: " + requestCode + " - " + resultCode);
+        Log.d(TAG, "onActivityResult: requestCode - resultCode: " + requestCode + " - " + resultCode);
         if(requestCode == ModifyFragment.REQUEST_RINGTONE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if(uri != null) {
@@ -185,7 +185,7 @@ public class ModifyFragment extends Fragment {
         super.onAttach(context);
 
         if(context instanceof ModifyActivity) {
-            Log.i(TAG, "onAttach: context instanceof ModifyActivity");
+            Log.d(TAG, "onAttach: context instanceof ModifyActivity");
             modifyActivity = (ModifyActivity) context;
         }
     }
@@ -193,7 +193,7 @@ public class ModifyFragment extends Fragment {
     private void setRingtoneName(Uri uri) {
         Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), uri);
         String ringtoneName = ringtone.getTitle(getActivity());
-        Log.i(TAG, "setRingtoneName: uri = " + ringtoneName);
+        Log.d(TAG, "setRingtoneName: uri = " + ringtoneName);
         textRingtoneValue.setText(ringtoneName);
         ringtoneUri = uri;
     }
@@ -230,7 +230,7 @@ public class ModifyFragment extends Fragment {
      * Get custom values from Views and create
      * the CustomBatteryNotification object.
      */
-    public CustomBatteryNotification getValuesFromViews() {
+    public CustomBatteryNotification getValuesFromViews(int size) {
         int percentage = percentageSeekBar.getProgress();
         BatteryStatus batteryStatus = statusSpinner.getSelectedItem().toString().equals("Charging")
                 ? BatteryStatus.CHARGING : BatteryStatus.DISCHARGING;
@@ -249,7 +249,8 @@ public class ModifyFragment extends Fragment {
                 ringtoneUri,
                 volume,
                 vibrate,
-                true
+                true,
+                size + 1
         );
 
         return customBatteryNotification;
@@ -260,12 +261,6 @@ public class ModifyFragment extends Fragment {
      * to the list of objects in the SharedPreferences file.
      */
     public void saveCustomBatteryNotification() {
-
-        CustomBatteryNotification customBatteryNotification = getValuesFromViews();
-        Log.i(TAG, "saveCustomBatteryNotification: " + customBatteryNotification.getPercentage()
-                + ", " + customBatteryNotification.getRingtoneUri()
-                + ", " + customBatteryNotification.getBatteryStatus()
-                + ", " + customBatteryNotification.getVibrate());
 
         // Get the Shared Preferences file for writing.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -290,7 +285,12 @@ public class ModifyFragment extends Fragment {
         else
             Log.d(TAG, "saveCustomBatteryNotification: notificationsList NULL");
 
-        // Add the new object to the list
+        // Create and Add the new object to the list
+        int size = 0;
+        if(notificationsList != null)
+            size = notificationsList.size();
+
+        CustomBatteryNotification customBatteryNotification = getValuesFromViews(size);
         if(notificationsList == null)
             notificationsList = new ArrayList<>();
         notificationsList.add(customBatteryNotification);

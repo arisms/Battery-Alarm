@@ -1,45 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:padding="@dimen/spacing_normal">
+    android:orientation="vertical"
+    android:paddingTop="@dimen/spacing_normal"
+    >
 
-    <Switch
-        android:id="@+id/switch_active"
-        android:layout_width="wrap_content"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"/>
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/text_notification_percentage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/zero_percent"
-        style="@style/TitleText"
-        android:layout_margin="@dimen/spacing_normal"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/switch_active"
-        />
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/spacing_small"
+            android:layout_marginRight="@dimen/spacing_normal"/>
 
-    <TextView
-        android:id="@+id/text_notification_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/battery_status"
-        android:layout_toRightOf="@+id/text_notification_percentage"
-        android:gravity="center_vertical"
-        android:layout_centerVertical="true"
-        style="@style/LightText"/>
+
+        <TextView
+            android:id="@+id/text_notification_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zero_percent"
+            style="@style/TitleText"
+            android:layout_marginLeft="@dimen/spacing_normal"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/switch_active"
+            />
+
+        <TextView
+            android:id="@+id/text_notification_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/battery_status"
+            android:layout_toRightOf="@+id/text_notification_percentage"
+            android:layout_centerVertical="true"
+            style="@style/LightText"/>
+
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/bluegray_transparent"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_marginTop="@dimen/spacing_normal"/>
 
-</RelativeLayout>
+</LinearLayout>
