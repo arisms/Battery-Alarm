@@ -22,15 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Aris on 13/09/16.
- */
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     private MainActivity mainActivity;
     private static NotificationsAdapter notificationsAdapter;
-    private static List<NotificationsListItem> notificationsList;
+    private static List<NotificationsListItem> notificationsListWithHeaders;
 
     public HomeFragment() {
     }
@@ -43,24 +40,27 @@ public class HomeFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
 
         // Create list of items for the RecyclerView
-        notificationsList = new ArrayList<NotificationsListItem>();
+        notificationsListWithHeaders = new ArrayList<NotificationsListItem>();
 
         // Retrieve the list of CustomBatterNotification
         // objects from the SharedPreferences file.
         List<CustomBatteryNotification> notifications = getListOfCustomNotifications(mainActivity);
-
-        // Sort the list of CustomBatteryNotification objects
-        Collections.sort(notifications);
+        if (notifications == null)
+            notifications = new ArrayList<CustomBatteryNotification>();
+        else {
+            // Sort the list of CustomBatteryNotification objects
+            Collections.sort(notifications);
+        }
 
         // If the list of notification objects contains at least one notification set as active
         if(Utility.notificationsListContainsActive(notifications)) {
-            // Create a header in the notificationsList for active notifications
-            notificationsList.add(new NotificationsListItem(true, "Active", null));
+            // Create a header in the notificationsListWithHeaders for active notifications
+            notificationsListWithHeaders.add(new NotificationsListItem(true, "Active", null));
 
             // Add all active objects
             for (CustomBatteryNotification n : notifications) {
                 if(n.getActive())
-                    notificationsList.add(new NotificationsListItem(false, "", n));
+                    notificationsListWithHeaders.add(new NotificationsListItem(false, "", n));
 
                 // Since the list is sorted, all active objects are first
                 if(!n.getActive())
@@ -69,21 +69,20 @@ public class HomeFragment extends Fragment {
         }
         // If the list of notification objects contains at least one notification set as INactive
         if(Utility.notificationsListContainsInactive(notifications)) {
-            // Create a header in the notificationsList for INactive notifications
-            notificationsList.add(new NotificationsListItem(true, "Deactivated", null));
+            // Create a header in the notificationsListWithHeaders for INactive notifications
+            notificationsListWithHeaders.add(new NotificationsListItem(true, "Deactivated", null));
 
             // Add all active objects
             for (CustomBatteryNotification n : notifications) {
                 if(!n.getActive())
-                    notificationsList.add(new NotificationsListItem(false, "", n));
+                    notificationsListWithHeaders.add(new NotificationsListItem(false, "", n));
             }
         }
 
-
-//        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.id.notifications_recycler, container, false);
+        // Create the RecyclerView and set the adapter
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.notifications_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        notificationsAdapter = new NotificationsAdapter(this, notifications);
+        notificationsAdapter = new NotificationsAdapter(this, notificationsListWithHeaders);
         recyclerView.setAdapter(notificationsAdapter);
 
         return rootView;
@@ -96,19 +95,19 @@ public class HomeFragment extends Fragment {
 
         List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
         String json = sharedPreferences.getString("notificationsJson", "");
-        Log.d(TAG, "getListOfCustomNotifications: notificationsList JSON string from SP: " + json);
+        Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders JSON string from SP: " + json);
 
         // Convert from JSON string to list of CustomBatteryNotification objects
         Type type = new TypeToken<List<CustomBatteryNotification>>(){}.getType();
         notificationsList = gson.fromJson(json, type);
         if(notificationsList != null) {
-            Log.d(TAG, "getListOfCustomNotifications: notificationsList.size = " + notificationsList.size());
+            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders.size = " + notificationsList.size());
             for (CustomBatteryNotification c : notificationsList) {
-                Log.d(TAG, "getListOfCustomNotifications: notificationsList - " + c.toString());
+                Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders - " + c.toString());
             }
         }
         else
-            Log.d(TAG, "getListOfCustomNotifications: notificationsList NULL");
+            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders NULL");
 
         return notificationsList;
     }
