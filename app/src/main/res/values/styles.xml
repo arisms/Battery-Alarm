@@ -48,7 +48,7 @@
 
     <style name="TitleText" parent="@style/RegularText">
         <item name="android:fontFamily">sans-serif-bold</item>
-        <item name="android:textSize">@dimen/font_huge</item>
+        <item name="android:textSize">@dimen/font_larger</item>
     </style>
 
 

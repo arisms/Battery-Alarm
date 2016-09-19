@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,7 +55,8 @@ public class HomeFragment extends Fragment {
 
 //        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.id.notifications_recycler, container, false);
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.notifications_recycler);
-        NotificationsAdapter notificationsAdapter = new NotificationsAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        NotificationsAdapter notificationsAdapter = new NotificationsAdapter(notificationList);
         recyclerView.setAdapter(notificationsAdapter);
 
         return rootView;
