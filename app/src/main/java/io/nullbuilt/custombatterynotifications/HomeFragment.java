@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,15 +38,6 @@ public class HomeFragment extends Fragment {
 
         Log.d(TAG, "onCreateView: HomeFragment");
         mainActivity = (MainActivity) getActivity();
-
-        // Add the Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainActivity.startModifyActivity(1);
-            }
-        });
 
         /* Retrieve the list of CustomBatterNotification
            objects from the SharedPreferences file. */
