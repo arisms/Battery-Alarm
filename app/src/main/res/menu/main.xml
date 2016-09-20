@@ -7,8 +7,8 @@
         app:showAsAction="collapseActionView"
         android:icon="@mipmap/info"
         />
-    <item android:id="@+id/action_sort"
-        android:title="Sort"
+    <item android:id="@+id/action_refresh"
+        android:title="Refresh"
         app:showAsAction="collapseActionView"
         android:icon="@mipmap/info"
         />

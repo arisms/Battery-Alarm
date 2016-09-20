@@ -52,7 +52,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder,final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         if(holder instanceof ViewHolderHeader) {
             final ViewHolderHeader holderHeader = (ViewHolderHeader) holder;
@@ -85,12 +85,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             holderItem.active.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: id = " + mNotificationsList.get(position).customBatteryNotification.getId());
-                    if (holderItem.active.isChecked()) {
-                        Log.d(TAG, "swtich is now checked");
-                        //mNotificationsList.get(position).ac
-                        //homeFragment.updateNotificationsList(mNotificationsList);
-                    }
+                    mNotificationsList.get(position).customBatteryNotification.setActive(holderItem.active.isChecked());
+                    homeFragment.updateNotificationsList(mNotificationsList);
+                    homeFragment.activeStateChanged(holderItem.active.isChecked());
                 }
             });
         }
@@ -134,6 +131,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             super(view);
             headerText = (TextView) view.findViewById(R.id.text_list_header);
         }
+    }
+
+    public void swap(List<NotificationsListItem> updatedList) {
+        if(mNotificationsList != null) {
+            mNotificationsList.clear();
+            mNotificationsList.addAll(updatedList);
+        }
+        else
+            mNotificationsList = updatedList;
+
+        notifyDataSetChanged();
+
+
     }
 
     public void clearAll() {

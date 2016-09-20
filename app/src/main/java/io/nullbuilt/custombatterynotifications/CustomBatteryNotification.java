@@ -1,7 +1,6 @@
 package io.nullbuilt.custombatterynotifications;
 
 import android.net.Uri;
-import android.util.Log;
 
 /**
  * Class for the custom battery notifications created by the user.
@@ -47,6 +46,9 @@ public class CustomBatteryNotification implements Comparable<CustomBatteryNotifi
     public boolean getActive() {
         return this.active;
     }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
     public int getId() {
         return this.id;
     }
@@ -63,7 +65,6 @@ public class CustomBatteryNotification implements Comparable<CustomBatteryNotifi
 
     @Override
     public int compareTo(CustomBatteryNotification other) {
-        Log.d(TAG, "compareTo: this.percentage = " + this.getPercentage() + " other.percentage = " + other.getPercentage());
         // If the current notification is active and the other is inactive
         if (this.getActive() && !other.getActive())
             return -1;

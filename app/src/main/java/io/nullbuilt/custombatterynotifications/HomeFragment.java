@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,6 +29,7 @@ public class HomeFragment extends Fragment {
     private MainActivity mainActivity;
     private static NotificationsAdapter notificationsAdapter;
     private static List<NotificationsListItem> notificationsListWithHeaders;
+    List<CustomBatteryNotification> notifications;
 
     public HomeFragment() {
     }
@@ -44,7 +46,7 @@ public class HomeFragment extends Fragment {
 
         // Retrieve the list of CustomBatterNotification
         // objects from the SharedPreferences file.
-        List<CustomBatteryNotification> notifications = getListOfCustomNotifications(mainActivity);
+        notifications = getListOfCustomNotifications(mainActivity);
         if (notifications == null)
             notifications = new ArrayList<CustomBatteryNotification>();
         else {
@@ -112,7 +114,16 @@ public class HomeFragment extends Fragment {
         return notificationsList;
     }
 
-    public void updateNotificationsList(List<CustomBatteryNotification> notificationsList) {
+    public void updateNotificationsList(List<NotificationsListItem> notificationsListWithHeaders) {
+
+        // Copy all CustomBatteryNotification objects from
+        // notificationsListWithHeaders to a new list
+        List<CustomBatteryNotification> updatedNotificationsList = new ArrayList<CustomBatteryNotification>();
+        for (NotificationsListItem n : notificationsListWithHeaders) {
+            if(!n.isHeader)
+                updatedNotificationsList.add(n.customBatteryNotification);
+        }
+
         // Get the Shared Preferences file for writing.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -121,12 +132,65 @@ public class HomeFragment extends Fragment {
 
         // Convert the list of objects to a JSON string and then
         // write the updated list back to the SharedPreferences
-        String json = gson.toJson(notificationsList);
+        String json = gson.toJson(updatedNotificationsList);
         editor.putString("notificationsJson", json);
         editor.apply();
+
+//        notificationsAdapter.swap(notificationsListWithHeaders);
+        reload();
     }
 
-    public void clearAll() {
-        notificationsAdapter.clearAll();
+    public void activeStateChanged(boolean active) {
+        if(active)
+            Toast.makeText(getActivity(), getString(R.string.toast_notification_activated), Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(getActivity(), getString(R.string.toast_notification_deactivated), Toast.LENGTH_SHORT).show();
+    }
+
+    public void reload() {
+        Log.d(TAG, "reload()");
+
+        notificationsListWithHeaders.clear();
+
+        // Retrieve the list of CustomBatterNotification
+        // objects from the SharedPreferences file.
+        notifications.clear();
+        notifications = getListOfCustomNotifications(mainActivity);
+        if (notifications == null)
+            notifications = new ArrayList<CustomBatteryNotification>();
+        else {
+            // Sort the list of CustomBatteryNotification objects
+            Collections.sort(notifications);
+        }
+
+        // If the list of notification objects contains at least one notification set as active
+        if(Utility.notificationsListContainsActive(notifications)) {
+            // Create a header in the notificationsListWithHeaders for active notifications
+            notificationsListWithHeaders.add(new NotificationsListItem(true, "Active", null));
+
+            // Add all active objects
+            for (CustomBatteryNotification n : notifications) {
+                if(n.getActive())
+                    notificationsListWithHeaders.add(new NotificationsListItem(false, "", n));
+
+                // Since the list is sorted, all active objects are first
+                if(!n.getActive())
+                    break;
+            }
+        }
+        // If the list of notification objects contains at least one notification set as INactive
+        if(Utility.notificationsListContainsInactive(notifications)) {
+            // Create a header in the notificationsListWithHeaders for INactive notifications
+            notificationsListWithHeaders.add(new NotificationsListItem(true, "Deactivated", null));
+
+            // Add all active objects
+            for (CustomBatteryNotification n : notifications) {
+                if(!n.getActive())
+                    notificationsListWithHeaders.add(new NotificationsListItem(false, "", n));
+            }
+        }
+
+        // Refresh the RecyclerView adapter
+        notificationsAdapter.swap(notificationsListWithHeaders);
     }
 }
