@@ -16,6 +16,11 @@
     <string name="list_header">Active</string>
     <string name="toast_notification_activated">Notification has been activated.</string>
     <string name="toast_notification_deactivated">Notification has been deactivated.</string>
+    <string name="status_charging">Charging</string>
+    <string name="status_discharging">Discharging</string>
+    <string name="status_full">Full</string>
+    <string name="header_text">Battery now at:</string>
+    <string name="info_edit">Tap and hold on a notification for options.</string>
 
     <!-- Battery Status Values -->
     <string-array name="status_values_array">

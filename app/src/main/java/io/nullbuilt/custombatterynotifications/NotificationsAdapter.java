@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static HomeFragment homeFragment;
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_ITEM = 2;
+    private static MainActivity mainActivity;
 
     List<NotificationsListItem> mNotificationsList;
 
@@ -32,6 +34,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         Log.d(TAG, "NotificationsAdapter: mNotificationsList size = " + mNotificationsList.size());
 
         homeFragment = (HomeFragment) fragment;
+        mainActivity = (MainActivity) fragment.getActivity();
     }
 
     @Override
@@ -45,8 +48,25 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             return new ViewHolderHeader(view);
         }
         else if (viewType == TYPE_ITEM) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-                return new ViewHolderItem(view);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "onClick");
+                    Toast.makeText(mainActivity, mainActivity.getString(R.string.info_edit),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    Log.d(TAG, "onLongClick");
+                    Toast.makeText(mainActivity, "onLongClick",
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+            return new ViewHolderItem(view);
         }
         return null;
     }
@@ -61,10 +81,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         else if (holder instanceof ViewHolderItem) {
             final ViewHolderItem holderItem = (ViewHolderItem) holder;
 
-            Log.d(TAG, "onBindViewHolder: percentage text = " + mNotificationsList.get(position)
-                    .customBatteryNotification.getPercentage() + ", "
-                    + mNotificationsList.get(position).customBatteryNotification.getActive());
-
             // Set Battery Percentage text
             int percentage = (mNotificationsList.get(position).customBatteryNotification.getPercentage()) * 5;
             String percentageText = String.valueOf(percentage) + "%";
@@ -75,9 +91,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             String statusText;
             if (mNotificationsList.get(position).customBatteryNotification.getBatteryStatus()
                     .equals(BatteryStatus.CHARGING)) {
-                statusText = "Charging";
+                statusText = mainActivity.getString(R.string.status_charging);
             } else
-                statusText = "Discharging";
+                statusText = mainActivity.getString(R.string.status_discharging);
             holderItem.status.setText(statusText);
 
             // Set Active switch
@@ -111,7 +127,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         return super.getItemId(position);
     }
 
-    public class ViewHolderItem extends RecyclerView.ViewHolder {
+    public class ViewHolderItem extends RecyclerView.ViewHolder{
         public TextView percentage;
         public TextView status;
         public SwitchCompat active;
@@ -123,6 +139,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             active = (SwitchCompat) view.findViewById(R.id.switch_active);
         }
     }
+
+
 
     public class ViewHolderHeader extends RecyclerView.ViewHolder {
         public TextView headerText;
@@ -142,8 +160,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             mNotificationsList = updatedList;
 
         notifyDataSetChanged();
-
-
     }
 
     public void clearAll() {

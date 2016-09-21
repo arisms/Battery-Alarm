@@ -260,7 +260,7 @@ public class ModifyFragment extends Fragment {
      * Create a CustomBatteryNotification object and save it
      * to the list of objects in the SharedPreferences file.
      */
-    public void saveCustomBatteryNotification() {
+    public boolean saveCustomBatteryNotification() {
 
         // Get the Shared Preferences file for writing.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -285,12 +285,22 @@ public class ModifyFragment extends Fragment {
         else
             Log.d(TAG, "saveCustomBatteryNotification: notificationsList NULL");
 
-        // Create and Add the new object to the list
+
+        // Create the new object
         int size = 0;
         if(notificationsList != null)
             size = notificationsList.size();
 
         CustomBatteryNotification customBatteryNotification = getValuesFromViews(size);
+        // Search the list for existing objects
+        // with the same percentage and status
+        for (CustomBatteryNotification n : notificationsList) {
+            if(n.getPercentage() == customBatteryNotification.getPercentage()
+                    && n.getBatteryStatus().equals(customBatteryNotification.getBatteryStatus()))
+                return false;
+        }
+
+        // Add the new object to the list
         if(notificationsList == null)
             notificationsList = new ArrayList<>();
         notificationsList.add(customBatteryNotification);
@@ -300,5 +310,7 @@ public class ModifyFragment extends Fragment {
         json = gson.toJson(notificationsList);
         editor.putString("notificationsJson", json);
         editor.apply();
+
+        return true;
     }
 }

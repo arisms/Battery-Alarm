@@ -1,17 +1,23 @@
 package io.nullbuilt.custombatterynotifications;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -87,6 +93,8 @@ public class HomeFragment extends Fragment {
         notificationsAdapter = new NotificationsAdapter(this, notificationsListWithHeaders);
         recyclerView.setAdapter(notificationsAdapter);
 
+        setHeader(rootView);
+
         return rootView;
     }
 
@@ -138,6 +146,44 @@ public class HomeFragment extends Fragment {
 
 //        notificationsAdapter.swap(notificationsListWithHeaders);
         reload();
+    }
+
+    /**
+     * Set the Header showing current battery percentage and charging status
+     */
+    public void setHeader(View view) {
+
+        final TextView percentageText = (TextView) view.findViewById(R.id.text_header_percentage);
+        final TextView statusText = (TextView) view.findViewById(R.id.text_header_status);
+
+        BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int percentage = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                Log.d(TAG, "onReceive: level = " + percentage);
+                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -13);
+                Log.d(TAG, "onReceive: status = " + status);
+
+
+                percentageText.setText(Integer.toString(percentage) + "%");
+
+                if(status == BatteryManager.BATTERY_STATUS_CHARGING)
+                    statusText.setText(getString(R.string.status_charging));
+                else if(status == BatteryManager.BATTERY_STATUS_DISCHARGING || status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
+                    statusText.setText(getString(R.string.status_discharging));
+                else if(status == BatteryManager.BATTERY_STATUS_FULL)
+                    statusText.setText(getString(R.string.status_full));
+
+                if(percentage < 20)
+                    percentageText.setTextColor(ContextCompat.getColor(getActivity(), R.color.red));
+                else if(percentage > 80)
+                    percentageText.setTextColor(ContextCompat.getColor(getActivity(), R.color.green));
+                else
+                    percentageText.setTextColor(ContextCompat.getColor(getActivity(), R.color.blue));
+            }
+        };
+
+        getActivity().registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     public void activeStateChanged(boolean active) {
