@@ -1,6 +1,8 @@
 package io.nullbuilt.custombatterynotifications;
 
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -49,23 +51,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         else if (viewType == TYPE_ITEM) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "onClick");
-                    Toast.makeText(mainActivity, mainActivity.getString(R.string.info_edit),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    Log.d(TAG, "onLongClick");
-                    Toast.makeText(mainActivity, "onLongClick",
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });
             return new ViewHolderItem(view);
         }
         return null;
@@ -106,6 +91,23 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     homeFragment.activeStateChanged(holderItem.active.isChecked());
                 }
             });
+
+            // Set Click Listeners
+            holderItem.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mainActivity, mainActivity.getString(R.string.info_edit),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            holderItem.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog dialog = showOptionsDialog(position);
+                    dialog.show();
+                    return true;
+                }
+            });
         }
     }
 
@@ -124,7 +126,65 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public long getItemId(int position) {
+
         return super.getItemId(position);
+    }
+
+    private AlertDialog showOptionsDialog(final int position) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        int itemsId;
+        if(mNotificationsList.get(position).customBatteryNotification.getActive())
+            itemsId = R.array.longclick_options_array_active;
+        else
+            itemsId = R.array.longclick_options_array_deactivated;
+
+        builder.setItems(itemsId, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i) {
+                    case 0:
+                        boolean newStatus = !mNotificationsList.get(position).customBatteryNotification.getActive();
+                        // Change active state
+                        mNotificationsList.get(position).customBatteryNotification.setActive(newStatus);
+                        homeFragment.updateNotificationsList(mNotificationsList);
+                        homeFragment.activeStateChanged(newStatus);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        AlertDialog deleteDialog = deleteNotification(position);
+                        deleteDialog.show();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+        return builder.create();
+    }
+
+    private AlertDialog deleteNotification(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle(mainActivity.getString(R.string.dialog_delete_title));
+        builder.setMessage(mainActivity.getString(R.string.dialog_delete_message));
+        builder.setPositiveButton(mainActivity.getString(R.string.dialog_delete_positive),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mNotificationsList.remove(position);
+                homeFragment.notificationDeleted();
+                homeFragment.updateNotificationsList(mNotificationsList);
+            }
+        });
+        builder.setNegativeButton(mainActivity.getString(R.string.dialog_delete_negative),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d(TAG, "onClick: Delete - Cancel");
+            }
+        });
+        return builder.create();
     }
 
     public class ViewHolderItem extends RecyclerView.ViewHolder{
@@ -139,7 +199,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             active = (SwitchCompat) view.findViewById(R.id.switch_active);
         }
     }
-
 
 
     public class ViewHolderHeader extends RecyclerView.ViewHolder {

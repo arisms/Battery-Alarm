@@ -193,6 +193,11 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.toast_notification_deactivated), Toast.LENGTH_SHORT).show();
     }
 
+    public void notificationDeleted() {
+        Toast.makeText(getActivity(), getActivity().getString(R.string.notification_deleted), Toast.LENGTH_SHORT)
+                .show();
+    }
+
     public void reload() {
         Log.d(TAG, "reload()");
 

@@ -21,10 +21,27 @@
     <string name="status_full">Full</string>
     <string name="header_text">Battery now at:</string>
     <string name="info_edit">Tap and hold on a notification for options.</string>
+    <string name="dialog_delete_title">Delete Notification</string>
+    <string name="dialog_delete_message">Are you sure you want to completely remove this notification?</string>
+    <string name="dialog_delete_positive">Delete</string>
+    <string name="dialog_delete_negative">Cancel</string>
+    <string name="notification_deleted">Notification has been deleted.</string>
 
     <!-- Battery Status Values -->
     <string-array name="status_values_array">
         <item>Discharging</item>
         <item>Charging</item>
     </string-array>
+
+    <string-array name="longclick_options_array_active">
+        <item>Deactivate</item>
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+    <string-array name="longclick_options_array_deactivated">
+        <item>Activate</item>
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+
 </resources>
