@@ -96,6 +96,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             holderItem.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.d(TAG, "id = " + mNotificationsList.get(position).customBatteryNotification.getId());
                     Toast.makeText(mainActivity, mainActivity.getString(R.string.info_edit),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -151,6 +152,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
                         homeFragment.activeStateChanged(newStatus);
                         break;
                     case 1:
+                        homeFragment.editItem(mNotificationsList.get(position).customBatteryNotification.getId());
                         break;
                     case 2:
                         AlertDialog deleteDialog = deleteNotification(position);

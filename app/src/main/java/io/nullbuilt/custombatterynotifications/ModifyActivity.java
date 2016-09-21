@@ -1,6 +1,7 @@
 package io.nullbuilt.custombatterynotifications;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,9 +26,16 @@ public class ModifyActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_cancel);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Intent intent = getIntent();
+        int id = intent.getIntExtra("id", 0);
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", id);
+        final boolean edit = id > 0;
+
         // Create the fragment
         if( savedInstanceState == null ) {
             modifyFragment = new ModifyFragment();
+            modifyFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container_modify, modifyFragment).commit();
         }
@@ -40,13 +48,13 @@ public class ModifyActivity extends AppCompatActivity {
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (modifyFragment.saveCustomBatteryNotification()) {
+                    if (modifyFragment.saveCustomBatteryNotification(edit)) {
                         setResult(Activity.RESULT_OK);
                         finish();
                     }
                     else
                         Toast.makeText(modifyActivity,
-                                "A notification with the same percentage and charing status already exists.",
+                                "A notification with the same percentage and charging status already exists.",
                                 Toast.LENGTH_LONG).show();
                 }
             });

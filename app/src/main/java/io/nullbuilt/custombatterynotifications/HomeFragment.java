@@ -244,4 +244,8 @@ public class HomeFragment extends Fragment {
         // Refresh the RecyclerView adapter
         notificationsAdapter.swap(notificationsListWithHeaders);
     }
+
+    public void editItem(int id) {
+        mainActivity.startModifyActivity(mainActivity.REQUEST_EDIT_NOTIFICATION, id);
+    }
 }

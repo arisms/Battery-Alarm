@@ -48,6 +48,7 @@ public class ModifyFragment extends Fragment {
     private static final int VOLUME_MAX = 4;
     private static CheckBox vibrateCheckbox;
     private Uri ringtoneUri;
+    private int idEdit;
     SeekBar percentageSeekBar, volumeSeekBar;
     ModifyActivity modifyActivity = null;
 
@@ -55,19 +56,21 @@ public class ModifyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_modify, container, false);
 
-        setViews(rootView);
+        Bundle args = getArguments();
+        idEdit = args.getInt("id");
+
+        setViews(rootView, idEdit);
 
         return rootView;
     }
 
-    private void setViews(View rootView) {
+    private void setViews(View rootView, int idEdit) {
         ringtoneUri = null;
 
         // Instantiate View variables
         percentageValueText = (TextView) rootView.findViewById(R.id.text_percentage_value);
         textRingtoneValue = (TextView) rootView.findViewById(R.id.text_ringtone_value);
         vibrateCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_vibrate);
-
 
         // Percentage Seek Bar
         percentageSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_percentage);
@@ -166,6 +169,23 @@ public class ModifyFragment extends Fragment {
                     vibrateCheckbox.setChecked(true);
             }
         });
+
+        // If editing an existing item, load the object from SharedPreferences
+        // and edit the values in corresponding input fields accordingly
+        if(idEdit > 0) {
+            CustomBatteryNotification editItem = getItemWithId(idEdit);
+            percentageSeekBar.setProgress(editItem.getPercentage());
+//            statusSpinner.setSelection();
+            BatteryStatus status = editItem.getBatteryStatus();
+            if(status.equals(BatteryStatus.DISCHARGING))
+                statusSpinner.setSelection(0);
+            else
+                statusSpinner.setSelection(1);
+
+            setRingtoneName(editItem.getRingtoneUri());
+            volumeSeekBar.setProgress(editItem.getVolume());
+            vibrateCheckbox.setChecked(editItem.getVibrate());
+        }
     }
 
     @Override
@@ -230,7 +250,7 @@ public class ModifyFragment extends Fragment {
      * Get custom values from Views and create
      * the CustomBatteryNotification object.
      */
-    public CustomBatteryNotification getValuesFromViews(int size) {
+    public CustomBatteryNotification getValuesFromViews(int id) {
         int percentage = percentageSeekBar.getProgress();
         BatteryStatus batteryStatus = statusSpinner.getSelectedItem().toString().equals("Charging")
                 ? BatteryStatus.CHARGING : BatteryStatus.DISCHARGING;
@@ -250,7 +270,7 @@ public class ModifyFragment extends Fragment {
                 volume,
                 vibrate,
                 true,
-                size + 1
+                id
         );
 
         return customBatteryNotification;
@@ -260,7 +280,7 @@ public class ModifyFragment extends Fragment {
      * Create a CustomBatteryNotification object and save it
      * to the list of objects in the SharedPreferences file.
      */
-    public boolean saveCustomBatteryNotification() {
+    public boolean saveCustomBatteryNotification(boolean edit) {
 
         // Get the Shared Preferences file for writing.
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -287,17 +307,38 @@ public class ModifyFragment extends Fragment {
 
 
         // Create the new object
-        int size = 0;
-        if(notificationsList != null)
-            size = notificationsList.size();
+        int maxId;
+        if(notificationsList.size() == 0)
+            maxId = 1;
+        else
+            maxId = sharedPreferences.getInt("maxId", 0) + 1;
+        editor.putInt("maxId", maxId);
 
-        CustomBatteryNotification customBatteryNotification = getValuesFromViews(size);
+        int id;
+        if(edit)
+            id = idEdit;
+        else
+            id = maxId;
+
+        CustomBatteryNotification customBatteryNotification = getValuesFromViews(id);
+
         // Search the list for existing objects
         // with the same percentage and status
         for (CustomBatteryNotification n : notificationsList) {
-            if(n.getPercentage() == customBatteryNotification.getPercentage()
-                    && n.getBatteryStatus().equals(customBatteryNotification.getBatteryStatus()))
+            if (n.getPercentage() == customBatteryNotification.getPercentage()
+                    && n.getBatteryStatus().equals(customBatteryNotification.getBatteryStatus())
+                    && n.getId() != customBatteryNotification.getId())
                 return false;
+        }
+
+        // If editing existing notification
+        if (edit) {
+            for (CustomBatteryNotification n : notificationsList) {
+                if (n.getId() == customBatteryNotification.getId()) {
+                    notificationsList.remove(n);
+                    break;
+                }
+            }
         }
 
         // Add the new object to the list
@@ -312,5 +353,31 @@ public class ModifyFragment extends Fragment {
         editor.apply();
 
         return true;
+    }
+
+    /**
+     * Retrieves the CustomBatteryNotification item
+     * from the list of objects in SharedPreferences
+     */
+    public CustomBatteryNotification getItemWithId(int id) {
+        // Get the Shared Preferences file for writing.
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new Utility.UriSerializeDeserialize()).create();
+
+        // Read the list of objects from the SharedPreferences
+        List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
+        String json = sharedPreferences.getString("notificationsJson", "");
+
+        // Convert from JSON string to list of CustomBatteryNotification objects
+        Type type = new TypeToken<List<CustomBatteryNotification>>(){}.getType();
+        notificationsList = gson.fromJson(json, type);
+
+        if(notificationsList != null) {
+            for (CustomBatteryNotification n : notificationsList) {
+                if(n.getId() == id)
+                    return n;
+            }
+        }
+        return null;
     }
 }

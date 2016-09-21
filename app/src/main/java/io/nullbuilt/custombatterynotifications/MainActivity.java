@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_CREATE_NOTIFICATION = 1;
-    private static final int REQUEST_EDIT_NOTIFICATION = 2;
+    public static final int REQUEST_CREATE_NOTIFICATION = 1;
+    public static final int REQUEST_EDIT_NOTIFICATION = 2;
     private static HomeFragment homeFragment;
     private static Bundle mSavedInstanceState;
 
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startModifyActivity(1);
+                    startModifyActivity(REQUEST_CREATE_NOTIFICATION);
                 }
             });
         }
@@ -85,8 +85,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case REQUEST_EDIT_NOTIFICATION:
                 Log.d(TAG, "onActivityResult: REQUEST_EDIT_NOTIFICATION, result = " + resultCode);
-                if(resultCode == Activity.RESULT_OK)
+                if(resultCode == Activity.RESULT_OK) {
                     Toast.makeText(this, getString(R.string.notification_updated), Toast.LENGTH_LONG).show();
+                    reloadHomeFragment();
+                }
                 break;
             default:
                 break;
@@ -104,6 +106,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startModifyActivity(int requestCode) {
+
         startActivityForResult(new Intent(this, ModifyActivity.class), requestCode);
+    }
+
+    public void startModifyActivity(int requestCode, int id) {
+        Intent intent = new Intent(this, ModifyActivity.class);
+        intent.putExtra("id", id);
+
+        startActivityForResult(intent, requestCode);
     }
 }
