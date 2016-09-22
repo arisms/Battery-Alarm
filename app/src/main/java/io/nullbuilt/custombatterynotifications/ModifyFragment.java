@@ -365,7 +365,9 @@ public class ModifyFragment extends Fragment {
 
         // Create the new object
         int maxId;
-        if(notificationsList.size() == 0)
+        if(notificationsList == null)
+            maxId = 1;
+        else if(notificationsList.size() == 0)
             maxId = 1;
         else
             maxId = sharedPreferences.getInt("maxId", 0) + 1;
@@ -381,19 +383,23 @@ public class ModifyFragment extends Fragment {
 
         // Search the list for existing objects
         // with the same percentage and status
-        for (CustomBatteryNotification n : notificationsList) {
-            if (n.getPercentage() == customBatteryNotification.getPercentage()
-                    && n.getBatteryStatus().equals(customBatteryNotification.getBatteryStatus())
-                    && n.getId() != customBatteryNotification.getId())
-                return false;
+        if (notificationsList != null) {
+            for (CustomBatteryNotification n : notificationsList) {
+                if (n.getPercentage() == customBatteryNotification.getPercentage()
+                        && n.getBatteryStatus().equals(customBatteryNotification.getBatteryStatus())
+                        && n.getId() != customBatteryNotification.getId())
+                    return false;
+            }
         }
 
         // If editing existing notification
         if (edit) {
-            for (CustomBatteryNotification n : notificationsList) {
-                if (n.getId() == customBatteryNotification.getId()) {
-                    notificationsList.remove(n);
-                    break;
+            if (notificationsList != null) {
+                for (CustomBatteryNotification n : notificationsList) {
+                    if (n.getId() == customBatteryNotification.getId()) {
+                        notificationsList.remove(n);
+                        break;
+                    }
                 }
             }
         }
