@@ -12,18 +12,23 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,13 +47,14 @@ public class ModifyFragment extends Fragment {
     private static Spinner statusSpinner = null;
 
     public static final int REQUEST_RINGTONE = 3;
-    private static TextView percentageValueText = null;
+    private static EditText percentageValueText = null;
     private static TextView textRingtoneValue = null;
     private static final int VOLUME_MIN = 0;
     private static final int VOLUME_MAX = 4;
     private static CheckBox vibrateCheckbox;
     private Uri ringtoneUri;
     private int idEdit;
+    private boolean playRingtoneFlag;
     SeekBar percentageSeekBar, volumeSeekBar;
     ModifyActivity modifyActivity = null;
 
@@ -58,27 +64,58 @@ public class ModifyFragment extends Fragment {
 
         Bundle args = getArguments();
         idEdit = args.getInt("id");
+        if (idEdit > 0)
+            playRingtoneFlag = false;
 
         setViews(rootView, idEdit);
 
         return rootView;
     }
 
-    private void setViews(View rootView, int idEdit) {
+    private void setViews(View rootView, final int idEdit) {
         ringtoneUri = null;
 
         // Instantiate View variables
-        percentageValueText = (TextView) rootView.findViewById(R.id.text_percentage_value);
-        textRingtoneValue = (TextView) rootView.findViewById(R.id.text_ringtone_value);
-        vibrateCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_vibrate);
+        percentageValueText = (EditText) rootView.findViewById(R.id.text_percentage_value);
+        percentageValueText.setSelectAllOnFocus(true);
+        percentageSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_percentage);
+        percentageValueText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                    percentageValueText.setSelected(false);
+                percentageSeekBar.setProgress(Integer.parseInt(percentageValueText.getText().toString()));
+                return false;
+            }
+        });
+        percentageValueText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (percentageValueText.getText().length() > 0) {
+                    int value = Integer.parseInt(percentageValueText.getText().toString());
+                    if (value > 0 && value <= 100)
+                        percentageSeekBar.setProgress(value);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         // Percentage Seek Bar
-        percentageSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_percentage);
         percentageSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                String value = Integer.toString(5*seekBar.getProgress()) + "%";
+                String value = Integer.toString(seekBar.getProgress());
                 percentageValueText.setText(value);
+                percentageValueText.setSelection(percentageValueText.getText().length());
             }
 
             @Override
@@ -91,6 +128,9 @@ public class ModifyFragment extends Fragment {
             }
         });
 
+        vibrateCheckbox = (CheckBox) rootView.findViewById(R.id.checkbox_vibrate);
+        textRingtoneValue = (TextView) rootView.findViewById(R.id.text_ringtone_value);
+
         // Volume Seek Bar
         volumeSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar_volume);
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -98,7 +138,9 @@ public class ModifyFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 // Get the volume value from the seekbar
                 int volume = volumeSeekBar.getProgress();
-                playRingtoneForFiveSeconds(ringtoneUri, volume);
+                if(playRingtoneFlag)
+                    playRingtoneForFiveSeconds(ringtoneUri, volume);
+                playRingtoneFlag = true;
             }
 
             @Override
@@ -113,7 +155,7 @@ public class ModifyFragment extends Fragment {
         volumeMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                volumeSeekBar.setProgress(VOLUME_MIN);
+                volumeSeekBar.setProgress(volumeSeekBar.getProgress() - 1);
             }
         });
 
@@ -121,7 +163,7 @@ public class ModifyFragment extends Fragment {
         volumeMax.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                volumeSeekBar.setProgress(VOLUME_MAX);
+                volumeSeekBar.setProgress(volumeSeekBar.getProgress() + 1);
             }
         });
 
@@ -195,6 +237,7 @@ public class ModifyFragment extends Fragment {
         if(requestCode == ModifyFragment.REQUEST_RINGTONE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if(uri != null) {
+                playRingtoneFlag = true;
                 setRingtoneName(uri);
             }
         }
@@ -212,20 +255,32 @@ public class ModifyFragment extends Fragment {
 
     private void setRingtoneName(Uri uri) {
         Ringtone ringtone = RingtoneManager.getRingtone(getActivity(), uri);
-        String ringtoneName = ringtone.getTitle(getActivity());
-        Log.d(TAG, "setRingtoneName: uri = " + ringtoneName);
-        textRingtoneValue.setText(ringtoneName);
-        ringtoneUri = uri;
+        try {
+            final MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(getActivity(), uri);
+            String ringtoneName = ringtone.getTitle(getActivity());
+            Log.d(TAG, "setRingtoneName: uri = " + ringtoneName);
+            textRingtoneValue.setText(ringtoneName);
+            ringtoneUri = uri;
+
+        } catch (IOException e) {
+            Toast.makeText(modifyActivity, modifyActivity.getString(R.string.invalid_ringtone),
+                    Toast.LENGTH_LONG).show();
+
+            e.printStackTrace();
+        }
     }
 
     private void playRingtoneForFiveSeconds(Uri ringtoneUri, int volume) {
 
         float volumeFloat = (float) volume * (0.25f);
         try {
-            MediaPlayer mediaPlayer = new MediaPlayer();
+            final MediaPlayer mediaPlayer = new MediaPlayer();
             mediaPlayer.setVolume(volumeFloat, volumeFloat);
 
             if(ringtoneUri != null) {
+                Log.d(TAG, "playRingtoneForFiveSeconds: ringtoneUri = " + ringtoneUri);
+
                 mediaPlayer.setDataSource(getActivity(), ringtoneUri);
                 mediaPlayer.prepare();
                 mediaPlayer.start();
@@ -237,10 +292,12 @@ public class ModifyFragment extends Fragment {
                 });
             }
             else {
-
+                Log.d(TAG, "playRingtoneForFiveSeconds: ringtoneUri is null");
             }
 
         } catch (IOException e) {
+            Toast.makeText(modifyActivity, modifyActivity.getString(R.string.invalid_ringtone),
+                    Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 

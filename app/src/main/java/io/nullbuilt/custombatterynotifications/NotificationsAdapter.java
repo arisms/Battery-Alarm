@@ -67,7 +67,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             final ViewHolderItem holderItem = (ViewHolderItem) holder;
 
             // Set Battery Percentage text
-            int percentage = (mNotificationsList.get(position).customBatteryNotification.getPercentage()) * 5;
+            int percentage = (mNotificationsList.get(position).customBatteryNotification.getPercentage());
             String percentageText = String.valueOf(percentage) + "%";
             holderItem.percentage.setText(percentageText);
             holderItem.percentage.setMinEms(2);

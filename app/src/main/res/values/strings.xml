@@ -26,6 +26,8 @@
     <string name="dialog_delete_positive">Delete</string>
     <string name="dialog_delete_negative">Cancel</string>
     <string name="notification_deleted">Notification has been deleted.</string>
+    <string name="invalid_ringtone">Invalid ringtone selected</string>
+    <string name="fifty">50</string>
 
     <!-- Battery Status Values -->
     <string-array name="status_values_array">
