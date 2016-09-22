@@ -6,11 +6,11 @@
         android:title="Add new"
         app:showAsAction="collapseActionView"
         />
-    <item android:id="@+id/action_enable_all"
+    <item android:id="@+id/action_activate_all"
         android:title="Activate all"
         app:showAsAction="collapseActionView"
         />
-    <item android:id="@+id/action_disable_all"
+    <item android:id="@+id/action_deactivate_all"
         android:title="Deactivate all"
         app:showAsAction="collapseActionView"
         />

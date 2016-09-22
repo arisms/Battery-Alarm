@@ -266,4 +266,28 @@ public class HomeFragment extends Fragment {
     public void editItem(int id) {
         mainActivity.startModifyActivity(mainActivity.REQUEST_EDIT_NOTIFICATION, id);
     }
+
+    public void activateAll() {
+        if(notificationsListWithHeaders != null) {
+            for (NotificationsListItem i : notificationsListWithHeaders) {
+                if (!i.isHeader)
+                    i.customBatteryNotification.setActive(true);
+            }
+            //notificationsAdapter.swap(notificationsListWithHeaders);
+            updateNotificationsList(notificationsListWithHeaders);
+            Toast.makeText(getActivity(), "Notifications have been activated.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void deactivateAll() {
+        if(notificationsListWithHeaders != null) {
+            for (NotificationsListItem i : notificationsListWithHeaders) {
+                if (!i.isHeader)
+                    i.customBatteryNotification.setActive(false);
+            }
+            //notificationsAdapter.swap(notificationsListWithHeaders);
+            updateNotificationsList(notificationsListWithHeaders);
+            Toast.makeText(getActivity(), "Notifications have been deactivated.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
