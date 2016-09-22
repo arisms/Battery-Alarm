@@ -97,6 +97,12 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(homeFragment.batteryInfoReceiver);
+    }
+
     private void reloadHomeFragment() {
 //        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
         homeFragment.reload();

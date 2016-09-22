@@ -36,6 +36,7 @@ public class HomeFragment extends Fragment {
     private static NotificationsAdapter notificationsAdapter;
     private static List<NotificationsListItem> notificationsListWithHeaders;
     private static TextView mainText;
+    public static BroadcastReceiver batteryInfoReceiver;
     List<CustomBatteryNotification> notifications;
 
     public HomeFragment() {
@@ -165,7 +166,7 @@ public class HomeFragment extends Fragment {
         final TextView percentageText = (TextView) view.findViewById(R.id.text_header_percentage);
         final TextView statusText = (TextView) view.findViewById(R.id.text_header_status);
 
-        BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+        batteryInfoReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int percentage = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
