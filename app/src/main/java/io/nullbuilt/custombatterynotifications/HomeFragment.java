@@ -35,6 +35,7 @@ public class HomeFragment extends Fragment {
     private MainActivity mainActivity;
     private static NotificationsAdapter notificationsAdapter;
     private static List<NotificationsListItem> notificationsListWithHeaders;
+    private static TextView mainText;
     List<CustomBatteryNotification> notifications;
 
     public HomeFragment() {
@@ -94,6 +95,14 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(notificationsAdapter);
 
         setHeader(rootView);
+
+        mainText = (TextView) rootView.findViewById(R.id.text_main);
+        if(notificationsListWithHeaders.size() > 0) {
+            mainText.setVisibility(View.GONE);
+        }
+        else {
+            mainText.setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }
@@ -243,6 +252,14 @@ public class HomeFragment extends Fragment {
 
         // Refresh the RecyclerView adapter
         notificationsAdapter.swap(notificationsListWithHeaders);
+
+        // Set visibility of text and icon for 0 notifications
+        if(notificationsListWithHeaders.size() > 0) {
+            mainText.setVisibility(View.GONE);
+        }
+        else {
+            mainText.setVisibility(View.VISIBLE);
+        }
     }
 
     public void editItem(int id) {

@@ -54,4 +54,20 @@
         android:layout_below="@+id/layout_header"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+    <TextView
+        android:id="@+id/text_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_notifications"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        style="@style/RegularText"
+        android:textColor="@color/bluegray_dark"
+        android:paddingLeft="@dimen/spacing_huge"
+        android:paddingRight="@dimen/spacing_huge"
+        android:paddingBottom="@dimen/spacing_huge"
+        android:textSize="@dimen/font_large"
+        android:lines="2"
+        />
+
 </RelativeLayout>

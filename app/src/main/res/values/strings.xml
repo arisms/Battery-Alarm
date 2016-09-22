@@ -28,6 +28,7 @@
     <string name="notification_deleted">Notification has been deleted.</string>
     <string name="invalid_ringtone">Invalid ringtone selected</string>
     <string name="fifty">50</string>
+    <string name="no_notifications">You have not created any notifications yet.</string>
 
     <!-- Battery Status Values -->
     <string-array name="status_values_array">
