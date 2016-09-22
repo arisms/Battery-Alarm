@@ -4,14 +4,14 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingTop="@dimen/spacing_normal"
+    android:paddingTop="@dimen/spacing_small"
     >
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:minHeight="60dp">
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_active"
@@ -50,6 +50,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/bluegray_transparent"
-        android:layout_marginTop="@dimen/spacing_normal"/>
+        android:layout_marginTop="@dimen/spacing_small"/>
 
 </LinearLayout>

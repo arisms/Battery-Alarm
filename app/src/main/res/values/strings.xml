@@ -20,7 +20,7 @@
     <string name="status_discharging">Discharging</string>
     <string name="status_full">Full</string>
     <string name="header_text">Battery now at:</string>
-    <string name="info_edit">Tap and hold on a notification for options.</string>
+    <string name="info_edit">Tap and hold for options.</string>
     <string name="dialog_delete_title">Delete Notification</string>
     <string name="dialog_delete_message">Are you sure you want to completely remove this notification?</string>
     <string name="dialog_delete_positive">Delete</string>

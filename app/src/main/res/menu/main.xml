@@ -2,15 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_information"
-        android:title="Information"
+    <item android:id="@+id/action_add_new"
+        android:title="Add new"
         app:showAsAction="collapseActionView"
-        android:icon="@mipmap/info"
         />
-    <item android:id="@+id/action_refresh"
-        android:title="Refresh"
+    <item android:id="@+id/action_enable_all"
+        android:title="Activate all"
         app:showAsAction="collapseActionView"
-        android:icon="@mipmap/info"
+        />
+    <item android:id="@+id/action_disable_all"
+        android:title="Deactivate all"
+        app:showAsAction="collapseActionView"
         />
 
 

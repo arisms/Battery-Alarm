@@ -59,15 +59,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.action_information) {
-            // Start the AboutActivity
-            //startModifyActivity(REQUEST_EDIT_NOTIFICATION);
-            return true;
-        }
-        else if(id == R.id.action_refresh) {
-            reloadHomeFragment();
-            return true;
-        }
+//        if(id == R.id.action_information) {
+//            // Start the AboutActivity
+//            //startModifyActivity(REQUEST_EDIT_NOTIFICATION);
+//            return true;
+//        }
+//        else if(id == R.id.action_refresh) {
+//            reloadHomeFragment();
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
