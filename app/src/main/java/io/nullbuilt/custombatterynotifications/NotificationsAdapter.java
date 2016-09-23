@@ -7,8 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_ITEM = 2;
     private static MainActivity mainActivity;
+    private static boolean isTouched;
 
     List<NotificationsListItem> mNotificationsList;
 
@@ -83,12 +86,30 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             // Set Active switch
             holderItem.active.setChecked(mNotificationsList.get(position).customBatteryNotification.getActive());
-            holderItem.active.setOnClickListener(new View.OnClickListener() {
+            isTouched = false;
+            holderItem.active.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    mNotificationsList.get(position).customBatteryNotification.setActive(holderItem.active.isChecked());
-                    homeFragment.updateNotificationsList(mNotificationsList);
-                    homeFragment.activeStateChanged(holderItem.active.isChecked());
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    isTouched = true;
+                    return false;
+                }
+            });
+//            holderItem.active.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    mNotificationsList.get(position).customBatteryNotification.setActive(holderItem.active.isChecked());
+//                    homeFragment.updateNotificationsList(mNotificationsList);
+//                    homeFragment.activeStateChanged(holderItem.active.isChecked());
+//                }
+//            });
+            holderItem.active.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if(isTouched) {
+                        mNotificationsList.get(position).customBatteryNotification.setActive(holderItem.active.isChecked());
+                        homeFragment.updateNotificationsList(mNotificationsList);
+                        homeFragment.activeStateChanged(holderItem.active.isChecked());
+                    }
                 }
             });
 
@@ -189,7 +210,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         return builder.create();
     }
 
-    public class ViewHolderItem extends RecyclerView.ViewHolder{
+    public class ViewHolderItem extends RecyclerView.ViewHolder {
         public TextView percentage;
         public TextView status;
         public SwitchCompat active;

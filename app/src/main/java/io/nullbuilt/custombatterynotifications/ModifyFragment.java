@@ -55,6 +55,7 @@ public class ModifyFragment extends Fragment {
     private Uri ringtoneUri;
     private int idEdit;
     private boolean playRingtoneFlag;
+    private boolean active;
     SeekBar percentageSeekBar, volumeSeekBar;
     ModifyActivity modifyActivity = null;
 
@@ -227,7 +228,10 @@ public class ModifyFragment extends Fragment {
             setRingtoneName(editItem.getRingtoneUri());
             volumeSeekBar.setProgress(editItem.getVolume());
             vibrateCheckbox.setChecked(editItem.getVibrate());
+            active = editItem.getActive();
         }
+        else
+            active = true;
     }
 
     @Override
@@ -326,7 +330,7 @@ public class ModifyFragment extends Fragment {
                 ringtoneUri,
                 volume,
                 vibrate,
-                true,
+                active,
                 id
         );
 
