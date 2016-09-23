@@ -268,26 +268,26 @@ public class HomeFragment extends Fragment {
     }
 
     public void activateAll() {
-        if(notificationsListWithHeaders != null) {
+        if(notificationsListWithHeaders != null && notificationsListWithHeaders.size() > 0) {
             for (NotificationsListItem i : notificationsListWithHeaders) {
                 if (!i.isHeader)
                     i.customBatteryNotification.setActive(true);
             }
             //notificationsAdapter.swap(notificationsListWithHeaders);
             updateNotificationsList(notificationsListWithHeaders);
-            Toast.makeText(getActivity(), "Notifications have been activated.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "All notifications are now activated.", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void deactivateAll() {
-        if(notificationsListWithHeaders != null) {
+        if(notificationsListWithHeaders != null  && notificationsListWithHeaders.size() > 0) {
             for (NotificationsListItem i : notificationsListWithHeaders) {
                 if (!i.isHeader)
                     i.customBatteryNotification.setActive(false);
             }
             //notificationsAdapter.swap(notificationsListWithHeaders);
             updateNotificationsList(notificationsListWithHeaders);
-            Toast.makeText(getActivity(), "Notifications have been deactivated.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "All notifications are now deactivated.", Toast.LENGTH_SHORT).show();
         }
     }
 }
