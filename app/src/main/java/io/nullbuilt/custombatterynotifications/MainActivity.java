@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate");
 
         // Add the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container_main, homeFragment, "HomeFragment").commit();
         }
+
+        startNotificationService();
     }
 
     @Override
@@ -102,16 +105,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         unregisterReceiver(homeFragment.batteryInfoReceiver);
     }
 
+    private void startNotificationService() {
+        Intent intent = new Intent(this, NotificationService.class);
+        this.startService(intent);
+    }
+
     private void reloadHomeFragment() {
-//        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+
         homeFragment.reload();
-//        HomeFragment newHomeFragment = new HomeFragment();
-//        getSupportFragmentManager().beginTransaction().detach(homeFragment)
-//                .replace(R.id.container_main, newHomeFragment);
     }
 
     public void startModifyActivity(int requestCode) {
