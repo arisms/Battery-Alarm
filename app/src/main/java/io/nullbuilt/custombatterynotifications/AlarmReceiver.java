@@ -8,7 +8,6 @@ import android.util.Log;
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "AlarmReceiver";
     public static final int REQUEST_CODE = 12345;
-//    public static final String ACTION = "fi.tut.cs.social.proximeety";
 
     // Triggered by the Alarm periodically (starts the service to run task)
     @Override

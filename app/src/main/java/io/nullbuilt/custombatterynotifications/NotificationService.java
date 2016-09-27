@@ -29,7 +29,12 @@ public class NotificationService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        scheduleAlarm();
+        if(!isAlarmUp()) {
+            scheduleAlarm();
+            Log.d(TAG, "onCreate: isAlarmUp = false");
+        }
+        else
+            Log.d(TAG, "onCreate: isAlarmUp = true");
     }
 
     @Override
@@ -54,7 +59,7 @@ public class NotificationService extends Service {
     public IBinder onBind(Intent intent) {
 
         Log.d(TAG, "onBind");
-        
+
         return null;
     }
 
@@ -89,5 +94,18 @@ public class NotificationService extends Service {
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 60 * 1000, pIntent);
 
+    }
+
+    public boolean isAlarmUp() {
+        boolean alarmUp = (PendingIntent.getBroadcast(getApplicationContext(), AlarmReceiver.REQUEST_CODE,
+                new Intent(getApplicationContext(), AlarmReceiver.class),
+                PendingIntent.FLAG_NO_CREATE) != null);
+
+        if (alarmUp)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
