@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startNotificationService() {
         Intent intent = new Intent(this, NotificationService.class);
+        intent.putExtra("trigger", "Activity");
         this.startService(intent);
     }
 

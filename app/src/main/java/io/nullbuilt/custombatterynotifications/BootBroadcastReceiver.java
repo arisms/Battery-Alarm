@@ -17,6 +17,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 
         Log.d(TAG, "onReceive");
         Intent serviceIntent = new Intent(context, NotificationService.class);
+        serviceIntent.putExtra("trigger", "BootBroadcastReceiver");
         context.startService(serviceIntent);
     }
 }
