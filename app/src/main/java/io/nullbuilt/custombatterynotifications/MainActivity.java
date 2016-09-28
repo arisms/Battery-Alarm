@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        unregisterReceiver(homeFragment.batteryInfoReceiver);
+        //unregisterReceiver(homeFragment.batteryInfoReceiver);
     }
 
     private void startNotificationService() {

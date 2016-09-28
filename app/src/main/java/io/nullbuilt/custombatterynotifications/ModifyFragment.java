@@ -140,7 +140,7 @@ public class ModifyFragment extends Fragment {
                 // Get the volume value from the seekbar
                 int volume = volumeSeekBar.getProgress();
                 if(playRingtoneFlag)
-                    playRingtoneForFiveSeconds(ringtoneUri, volume);
+                    playRingtone(ringtoneUri, volume);
                 playRingtoneFlag = true;
             }
 
@@ -275,7 +275,7 @@ public class ModifyFragment extends Fragment {
         }
     }
 
-    private void playRingtoneForFiveSeconds(Uri ringtoneUri, int volume) {
+    private void playRingtone(Uri ringtoneUri, int volume) {
 
         float volumeFloat = (float) volume * (0.25f);
         try {
@@ -283,7 +283,7 @@ public class ModifyFragment extends Fragment {
             mediaPlayer.setVolume(volumeFloat, volumeFloat);
 
             if(ringtoneUri != null) {
-                Log.d(TAG, "playRingtoneForFiveSeconds: ringtoneUri = " + ringtoneUri);
+                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
 
                 mediaPlayer.setDataSource(getActivity(), ringtoneUri);
                 mediaPlayer.prepare();
@@ -296,7 +296,7 @@ public class ModifyFragment extends Fragment {
                 });
             }
             else {
-                Log.d(TAG, "playRingtoneForFiveSeconds: ringtoneUri is null");
+                Log.d(TAG, "playRingtone: ringtoneUri is null");
             }
 
         } catch (IOException e) {

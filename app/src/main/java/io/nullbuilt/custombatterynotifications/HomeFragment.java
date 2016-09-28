@@ -108,6 +108,28 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+//        try {
+//            getActivity().unregisterReceiver(batteryInfoReceiver);
+//        } catch (IllegalArgumentException e) {
+//            Log.d(TAG, "onPause: IllegalArgumentException : " + e);
+//        }
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(batteryInfoReceiver);
+    }
+
     private List<CustomBatteryNotification> getListOfCustomNotifications(Context context) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -192,8 +214,7 @@ public class HomeFragment extends Fragment {
                     percentageText.setTextColor(ContextCompat.getColor(getActivity(), R.color.blue));
             }
         };
-
-        getActivity().registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+//        getActivity().registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     public void activeStateChanged(boolean active) {

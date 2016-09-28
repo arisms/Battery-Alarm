@@ -10,18 +10,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.List;
@@ -255,9 +258,9 @@ public class NotificationService extends Service {
 
         String notificationText = "";
         if (notification.getPercentage() < 100)
-            notificationText = "The battery has reached " + notification.getPercentage() + "% while " + status + ".";
-        else
-            notificationText = "The battery has reached " + notification.getPercentage() + "%.";
+            notificationText = "Battery at " + notification.getPercentage() + "% - " + status + ".";
+        else if (notification.getPercentage() == 100)
+            notificationText = "Battery full.";
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
@@ -265,32 +268,66 @@ public class NotificationService extends Service {
                         .setContentTitle(notificationTitle)
                         .setContentText(notificationText);
 
-        // Create an explicit intent for an Activity in the app
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        // Create an intent to start the MainActivity
+        Intent mainActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+        // Add the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Add the Intent that starts MainActivity to the top of the stack
+        stackBuilder.addNextIntent(mainActivityIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setLights(Color.BLUE, 500, 500);
+        mBuilder.setAutoCancel(true);
+
+        // TODO set volume, vibration, ringtone
+        //mBuilder.setSound(notification.getRingtoneUri());
+        playRingtone(notification.getRingtoneUri(), notification.getVolume());
+        if (notification.getVibrate()) {
+            Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            long[] pattern = {0, 100, 100, 80};
+            vibrator.vibrate(pattern, -1);
+        }
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(notification.getPercentage(), mBuilder.build());
+    }
 
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//        // Add the back stack for the Intent (but not the Intent itself)
-//        stackBuilder.addParentStack(MainActivity.class);
-//        // Add the Intent that starts the Activity to the top of the stack
-//        stackBuilder.addNextIntent(resultIntent);
-//        PendingIntent resultPendingIntent =
-//                stackBuilder.getPendingIntent(
-//                        0,
-//                        PendingIntent.FLAG_UPDATE_CURRENT
-//                );
-//
-//        mBuilder.setContentIntent(resultPendingIntent);
-        mBuilder.setAutoCancel(true);
-        mBuilder.setLights(Color.BLUE, 500, 500);
-        //Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        mBuilder.setSound(notification.getRingtoneUri());
-        // TODO set volume
-        mNotificationManager.notify(1, mBuilder.build());
-        Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = { 0, 100, 100, 80 };
-        vibrator.vibrate(pattern, -1);
+    private void playRingtone(Uri ringtoneUri, int volume) {
+
+        float volumeFloat = (float) volume * (0.25f);
+        try {
+            final MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setVolume(volumeFloat, volumeFloat);
+
+            if(ringtoneUri != null) {
+                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
+
+                mediaPlayer.setDataSource(getApplicationContext(), ringtoneUri);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        mediaPlayer.release();
+                    }
+                });
+            }
+            else {
+                Log.d(TAG, "playRingtone: ringtoneUri is null");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
