@@ -1,6 +1,7 @@
 package io.nullbuilt.custombatterynotifications;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -233,15 +234,38 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public void swap(List<NotificationsListItem> updatedList) {
-        if(mNotificationsList != null) {
-            mNotificationsList.clear();
-            mNotificationsList.addAll(updatedList);
-        }
-        else
-            mNotificationsList = updatedList;
+    public void swap(final List<NotificationsListItem> updatedList) {
 
-        notifyDataSetChanged();
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+
+                if(mNotificationsList != null) {
+                    mNotificationsList.clear();
+                    mNotificationsList.addAll(updatedList);
+                }
+                else
+                    mNotificationsList = updatedList;
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                notifyDataSetChanged();
+            }
+        };
+        asyncTask.execute();
+
+//        if(mNotificationsList != null) {
+//            mNotificationsList.clear();
+//            mNotificationsList.addAll(updatedList);
+//        }
+//        else
+//            mNotificationsList = updatedList;
+//
+//        this.notifyDataSetChanged();
     }
 
     public void clearAll() {

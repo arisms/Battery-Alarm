@@ -272,9 +272,6 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        // Refresh the RecyclerView adapter
-        notificationsAdapter.swap(notificationsListWithHeaders);
-
         // Set visibility of text and icon for 0 notifications
         if(notificationsListWithHeaders.size() > 0) {
             mainText.setVisibility(View.GONE);
@@ -282,6 +279,9 @@ public class HomeFragment extends Fragment {
         else {
             mainText.setVisibility(View.VISIBLE);
         }
+
+        // Refresh the RecyclerView adapter
+        notificationsAdapter.swap(notificationsListWithHeaders);
     }
 
     public void editItem(int id) {
