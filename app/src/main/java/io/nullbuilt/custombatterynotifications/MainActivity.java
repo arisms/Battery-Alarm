@@ -85,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CREATE_NOTIFICATION:
                 Log.d(TAG, "onActivityResult: REQUEST_CREATE_NOTIFICATION, result = " + resultCode);
                 if(resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(this, getString(R.string.notification_created), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.notification_created), Toast.LENGTH_SHORT).show();
                     reloadHomeFragment();
                 }
                 break;
             case REQUEST_EDIT_NOTIFICATION:
                 Log.d(TAG, "onActivityResult: REQUEST_EDIT_NOTIFICATION, result = " + resultCode);
                 if(resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(this, getString(R.string.notification_updated), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.notification_updated), Toast.LENGTH_SHORT).show();
                     reloadHomeFragment();
                 }
                 break;
