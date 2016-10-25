@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Log.d(TAG, "onCreateView: HomeFragment");
+//        Log.d(TAG, "onCreateView: HomeFragment");
         mainActivity = (MainActivity) getActivity();
 
         // Create list of items for the RecyclerView
@@ -137,19 +137,19 @@ public class HomeFragment extends Fragment {
 
         List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
         String json = sharedPreferences.getString("notificationsJson", "");
-        Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders JSON string from SP: " + json);
+//        Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders JSON string from SP: " + json);
 
         // Convert from JSON string to list of CustomBatteryNotification objects
         Type type = new TypeToken<List<CustomBatteryNotification>>(){}.getType();
         notificationsList = gson.fromJson(json, type);
         if(notificationsList != null) {
-            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders.size = " + notificationsList.size());
+//            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders.size = " + notificationsList.size());
             for (CustomBatteryNotification c : notificationsList) {
-                Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders - " + c.toString());
+//                Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders - " + c.toString());
             }
         }
-        else
-            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders NULL");
+//        else
+//            Log.d(TAG, "getListOfCustomNotifications: notificationsListWithHeaders NULL");
 
         return notificationsList;
     }
@@ -192,9 +192,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int percentage = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                Log.d(TAG, "onReceive: level = " + percentage);
+//                Log.d(TAG, "onReceive: level = " + percentage);
                 int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -13);
-                Log.d(TAG, "onReceive: status = " + status);
+//                Log.d(TAG, "onReceive: status = " + status);
 
 
                 percentageText.setText(Integer.toString(percentage) + "%");
@@ -230,7 +230,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void reload() {
-        Log.d(TAG, "reload()");
+//        Log.d(TAG, "reload()");
 
         notificationsListWithHeaders.clear();
 

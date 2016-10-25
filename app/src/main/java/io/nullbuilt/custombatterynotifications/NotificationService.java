@@ -18,7 +18,6 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,7 +45,7 @@ public class NotificationService extends Service {
 
     public NotificationService() {
         super();
-        Log.d(TAG, "NotificationService: constructor");
+//        Log.d(TAG, "NotificationService: constructor");
         currentPercentage = PERCENTAGE_NULL;     // Random negative numbers for initial value.
         lastCheckedPercentage = PERCENTAGE_NULL;
         currentStatus = STATUS_NULL;
@@ -56,14 +55,14 @@ public class NotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+//        Log.d(TAG, "onCreate");
 
         if(!isAlarmUp()) {
             scheduleAlarm();
-            Log.d(TAG, "onCreate: isAlarmUp = false");
+//            Log.d(TAG, "onCreate: isAlarmUp = false");
         }
-        else
-            Log.d(TAG, "onCreate: isAlarmUp = true");
+//        else
+//            Log.d(TAG, "onCreate: isAlarmUp = true");
 
         receiverSet = false;
     }
@@ -73,10 +72,10 @@ public class NotificationService extends Service {
 
         if (intent != null) {
             String trigger = intent.getStringExtra("trigger");
-            if (trigger != null)
-                Log.d(TAG, "onStartCommand: trigger = " + trigger);
-            else
-                Log.d(TAG, "onStartCommand: trigger = null");
+//            if (trigger != null)
+//                Log.d(TAG, "onStartCommand: trigger = " + trigger);
+//            else
+//                Log.d(TAG, "onStartCommand: trigger = null");
         }
 
 
@@ -88,17 +87,17 @@ public class NotificationService extends Service {
                     // Store current values in local variables
                     currentPercentage = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, PERCENTAGE_NULL);
                     currentStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, STATUS_NULL);
-                    Log.d(TAG, "onReceive: currentPercentage = " + currentPercentage
-                            + "%, currentStatus = " + currentStatus);
+//                    Log.d(TAG, "onReceive: currentPercentage = " + currentPercentage
+//                            + "%, currentStatus = " + currentStatus);
 
                     CustomBatteryNotification notification = checkForNotification();
                     if (notification != null) {
-                        Log.d(TAG, "onReceive: notification percentage - status: "
-                                + notification.getPercentage() + " - " + notification.getBatteryStatus());
+//                        Log.d(TAG, "onReceive: notification percentage - status: "
+//                                + notification.getPercentage() + " - " + notification.getBatteryStatus());
                         createNotification(notification);
                     }
-                    else
-                        Log.d(TAG, "onReceive: notification is null in Receiver");
+//                    else
+//                        Log.d(TAG, "onReceive: notification is null in Receiver");
                 }
             };
             registerReceiver(batteryInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -111,25 +110,25 @@ public class NotificationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
 
-        Log.d(TAG, "onBind");
+//        Log.d(TAG, "onBind");
 
         return null;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind");
+//        Log.d(TAG, "onUnbind");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+//        Log.d(TAG, "onDestroy");
     }
 
     private void scheduleAlarm() {
-        Log.d(TAG, "scheduleAlarm");
+//        Log.d(TAG, "scheduleAlarm");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -177,7 +176,7 @@ public class NotificationService extends Service {
         editor.apply();
 
         if (currentPercentage == lastCheckedPercentage && currentStatus == lastCheckedStatus) {
-            Log.d(TAG, "checkForNotification: currentPercentage == lastCheckedPercentage && currentStatus == lastCheckedStatus");
+//            Log.d(TAG, "checkForNotification: currentPercentage == lastCheckedPercentage && currentStatus == lastCheckedStatus");
             return null;
         }
         else {
@@ -197,8 +196,8 @@ public class NotificationService extends Service {
                 minPercentage = currentPercentage;
                 maxPercentage = currentPercentage;
             }
-            Log.d(TAG, "currentPercentage = " + currentPercentage + ", lastCheckedPercentage = " + lastCheckedPercentage);
-            Log.d(TAG, "minPercentage = " + minPercentage + ", maxPercentage = " + maxPercentage);
+//            Log.d(TAG, "currentPercentage = " + currentPercentage + ", lastCheckedPercentage = " + lastCheckedPercentage);
+//            Log.d(TAG, "minPercentage = " + minPercentage + ", maxPercentage = " + maxPercentage);
 
             Gson gson = new GsonBuilder().registerTypeAdapter(Uri.class, new Utility.UriSerializeDeserialize())
                     .create();
@@ -211,7 +210,7 @@ public class NotificationService extends Service {
             // status conditions that match the current ones.
             if (notificationsList != null) {
                 for (CustomBatteryNotification n : notificationsList) {
-                    Log.d(TAG, "checkForNotification: " + n.getPercentage() + ", " + n.getBatteryStatus() + ", " + n.getActive());
+//                    Log.d(TAG, "checkForNotification: " + n.getPercentage() + ", " + n.getBatteryStatus() + ", " + n.getActive());
                     boolean sameStatus;
                     if ((currentStatus == BatteryManager.BATTERY_STATUS_CHARGING
                             && n.getBatteryStatus().equals(BatteryStatus.CHARGING)) ||
@@ -219,7 +218,7 @@ public class NotificationService extends Service {
                                     || currentStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
                                     && n.getBatteryStatus().equals(BatteryStatus.DISCHARGING)) ||
                             n.getPercentage() == 100) {
-                        Log.d(TAG, "checkForNotification: Setting sameStatus to true");
+//                        Log.d(TAG, "checkForNotification: Setting sameStatus to true");
                         sameStatus = true;
                     }
                     else
@@ -229,20 +228,20 @@ public class NotificationService extends Service {
                             && n.getPercentage() <= maxPercentage
                             && sameStatus
                             && n.getActive()) {
-                        Log.d(TAG, "checkForNotification: found notification object");
+//                        Log.d(TAG, "checkForNotification: found notification object");
                         return n;
                     }
                 }
             }
-            else
-                Log.d(TAG, "checkForNotification: notificationsList is NULL");
+//            else
+//                Log.d(TAG, "checkForNotification: notificationsList is NULL");
         }
         return null;
     }
 
     public void createNotification(CustomBatteryNotification notification) {
-        Log.d(TAG, "createNotification: " + notification.getPercentage() + ", "
-                + notification.getBatteryStatus() + ", " + notification.getActive());
+//        Log.d(TAG, "createNotification: " + notification.getPercentage() + ", "
+//                + notification.getBatteryStatus() + ", " + notification.getActive());
 
         String notificationTitle = "Battery Alarm";
         String status = "";
@@ -309,7 +308,7 @@ public class NotificationService extends Service {
             mediaPlayer.setVolume(volumeFloat, volumeFloat);
 
             if(ringtoneUri != null) {
-                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
+//                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
 
                 mediaPlayer.setDataSource(getApplicationContext(), ringtoneUri);
                 mediaPlayer.prepare();
@@ -322,7 +321,7 @@ public class NotificationService extends Service {
                 });
             }
             else {
-                Log.d(TAG, "playRingtone: ringtoneUri is null");
+//                Log.d(TAG, "playRingtone: ringtoneUri is null");
             }
 
         } catch (IOException e) {

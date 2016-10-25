@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate");
+//        Log.d(TAG, "onCreate");
 
         // Add the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -83,14 +82,14 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQUEST_CREATE_NOTIFICATION:
-                Log.d(TAG, "onActivityResult: REQUEST_CREATE_NOTIFICATION, result = " + resultCode);
+//                Log.d(TAG, "onActivityResult: REQUEST_CREATE_NOTIFICATION, result = " + resultCode);
                 if(resultCode == Activity.RESULT_OK) {
                     Toast.makeText(this, getString(R.string.notification_created), Toast.LENGTH_SHORT).show();
                     reloadHomeFragment();
                 }
                 break;
             case REQUEST_EDIT_NOTIFICATION:
-                Log.d(TAG, "onActivityResult: REQUEST_EDIT_NOTIFICATION, result = " + resultCode);
+//                Log.d(TAG, "onActivityResult: REQUEST_EDIT_NOTIFICATION, result = " + resultCode);
                 if(resultCode == Activity.RESULT_OK) {
                     Toast.makeText(this, getString(R.string.notification_updated), Toast.LENGTH_SHORT).show();
                     reloadHomeFragment();
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+//        Log.d(TAG, "onDestroy");
         super.onDestroy();
         //unregisterReceiver(homeFragment.batteryInfoReceiver);
     }

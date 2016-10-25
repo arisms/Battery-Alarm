@@ -205,7 +205,7 @@ public class ModifyFragment extends Fragment {
         vibrateLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: isChecked = " + vibrateCheckbox.isChecked());
+//                Log.d(TAG, "onClick: isChecked = " + vibrateCheckbox.isChecked());
                 if(vibrateCheckbox.isChecked())
                     vibrateCheckbox.setChecked(false);
                 else
@@ -237,7 +237,7 @@ public class ModifyFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: requestCode - resultCode: " + requestCode + " - " + resultCode);
+//        Log.d(TAG, "onActivityResult: requestCode - resultCode: " + requestCode + " - " + resultCode);
         if(requestCode == ModifyFragment.REQUEST_RINGTONE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             if(uri != null) {
@@ -252,7 +252,7 @@ public class ModifyFragment extends Fragment {
         super.onAttach(context);
 
         if(context instanceof ModifyActivity) {
-            Log.d(TAG, "onAttach: context instanceof ModifyActivity");
+//            Log.d(TAG, "onAttach: context instanceof ModifyActivity");
             modifyActivity = (ModifyActivity) context;
         }
     }
@@ -263,7 +263,7 @@ public class ModifyFragment extends Fragment {
             final MediaPlayer mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(getActivity(), uri);
             String ringtoneName = ringtone.getTitle(getActivity());
-            Log.d(TAG, "setRingtoneName: uri = " + ringtoneName);
+//            Log.d(TAG, "setRingtoneName: uri = " + ringtoneName);
             textRingtoneValue.setText(ringtoneName);
             ringtoneUri = uri;
 
@@ -283,7 +283,7 @@ public class ModifyFragment extends Fragment {
             mediaPlayer.setVolume(volumeFloat, volumeFloat);
 
             if(ringtoneUri != null) {
-                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
+//                Log.d(TAG, "playRingtone: ringtoneUri = " + ringtoneUri);
 
                 mediaPlayer.setDataSource(getActivity(), ringtoneUri);
                 mediaPlayer.prepare();
@@ -296,7 +296,7 @@ public class ModifyFragment extends Fragment {
                 });
             }
             else {
-                Log.d(TAG, "playRingtone: ringtoneUri is null");
+//                Log.d(TAG, "playRingtone: ringtoneUri is null");
             }
 
         } catch (IOException e) {
@@ -352,19 +352,19 @@ public class ModifyFragment extends Fragment {
         // Read the list of objects from the SharedPreferences
         List<CustomBatteryNotification> notificationsList = new ArrayList<CustomBatteryNotification>();
         String json = sharedPreferences.getString("notificationsJson", "");
-        Log.d(TAG, "saveCustomBatteryNotification: JSON string from SP: " + json);
+//        Log.d(TAG, "saveCustomBatteryNotification: JSON string from SP: " + json);
 
         // Convert from JSON string to list of CustomBatteryNotification objects
         Type type = new TypeToken<List<CustomBatteryNotification>>(){}.getType();
         notificationsList = gson.fromJson(json, type);
         if(notificationsList != null) {
-            Log.d(TAG, "saveCustomBatteryNotification: notificationsList.size = " + notificationsList.size());
+//            Log.d(TAG, "saveCustomBatteryNotification: notificationsList.size = " + notificationsList.size());
             for (CustomBatteryNotification c : notificationsList) {
-                Log.d(TAG, "saveCustomBatteryNotification: notificationsList - " + c.toString());
+//                Log.d(TAG, "saveCustomBatteryNotification: notificationsList - " + c.toString());
             }
         }
-        else
-            Log.d(TAG, "saveCustomBatteryNotification: notificationsList NULL");
+//        else
+//            Log.d(TAG, "saveCustomBatteryNotification: notificationsList NULL");
 
 
         // Create the new object

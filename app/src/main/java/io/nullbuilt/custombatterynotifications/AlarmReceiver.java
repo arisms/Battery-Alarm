@@ -3,7 +3,6 @@ package io.nullbuilt.custombatterynotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "AlarmReceiver";
@@ -12,7 +11,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     // Triggered by the Alarm periodically (starts the service to run task)
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive");
+//        Log.d(TAG, "onReceive");
         Intent i = new Intent(context, NotificationService.class);
         i.putExtra("trigger", "Alarm");
         context.startService(i);

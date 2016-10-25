@@ -37,7 +37,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.mNotificationsList = new ArrayList<>(notificationList);
         else
             this.mNotificationsList = new ArrayList<>();
-        Log.d(TAG, "NotificationsAdapter: mNotificationsList size = " + mNotificationsList.size());
+//        Log.d(TAG, "NotificationsAdapter: mNotificationsList size = " + mNotificationsList.size());
 
         homeFragment = (HomeFragment) fragment;
         mainActivity = (MainActivity) fragment.getActivity();
@@ -118,7 +118,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             holderItem.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "id = " + mNotificationsList.get(position).customBatteryNotification.getId());
+//                    Log.d(TAG, "id = " + mNotificationsList.get(position).customBatteryNotification.getId());
                     Toast.makeText(mainActivity, mainActivity.getString(R.string.info_edit),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -205,7 +205,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(TAG, "onClick: Delete - Cancel");
+//                Log.d(TAG, "onClick: Delete - Cancel");
             }
         });
         return builder.create();
@@ -269,7 +269,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void clearAll() {
-        Log.d(TAG, "clearAll: size = " + mNotificationsList.size());
+//        Log.d(TAG, "clearAll: size = " + mNotificationsList.size());
         mNotificationsList.clear();
         this.notifyDataSetChanged();
     }
